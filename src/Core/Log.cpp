@@ -36,8 +36,9 @@ namespace Core{
 
       void logMessage(const char* msg, FIG_FLF_ARGS){
          FIG_LOG_INIT_CHECK;
+         std::string _file { shortenFilePath(file) };
          fprintf(g_stats.logFile, "%s LOG: %s | %s:%d, %s::%s\n",
-               timeSinceprogramStart().c_str(), msg, file, line, file, function);
+               timeSinceprogramStart().c_str(), msg, _file.c_str(), line, _file.c_str(), function);
 
          ++g_stats.totalMessages;
       }
@@ -63,17 +64,19 @@ namespace Core{
          ++g_stats.totalMessages;
          ++g_stats.totalWarnings;
 
+         std::string _file { shortenFilePath(file) };
          fprintf(g_stats.logFile, "%s %s: %s | %s:%d, %s::%s\n",
-               timeSinceprogramStart().c_str(), wlabel.c_str(), msg, file, line, file, function);
+               timeSinceprogramStart().c_str(), wlabel.c_str(), msg, _file.c_str(), line, _file.c_str(), function);
       }
 
       void figAssert(const char* msg, FIG_FLF_ARGS){
          FIG_LOG_INIT_CHECK;
+         std::string _file { shortenFilePath(file) };
          std::size_t sz = snprintf(NULL, 0, "%s FATAL ERROR: %s | %s:%d, %s::%s\n",
-               timeSinceprogramStart().c_str(), msg, file, line, file, function);
+               timeSinceprogramStart().c_str(), msg, _file.c_str(), line, _file.c_str(), function);
          char* str = new char[sz + 1];
          sprintf(str, "%s FATAL ERROR: %s | %s:%d, %s::%s\n",
-               timeSinceprogramStart().c_str(), msg, file, line, file, function);
+               timeSinceprogramStart().c_str(), msg, _file.c_str(), line, _file.c_str(), function);
          fprintf(g_stats.logFile, "%s", str);
          fprintf(stderr, "%s", str);
 
@@ -108,6 +111,12 @@ namespace Core{
          cnt -= SECS * 1000;
 
          return std::to_string(HRS) + ':' + std::to_string(MINS) + ':' + std::to_string(SECS) + ':' + std::to_string(cnt);
+      }
+
+      std::string shortenFilePath(const char* path){
+         std::string str { path };
+         std::size_t idx = str.rfind("src");
+         return idx == std::string::npos ? str : str.substr(idx, str.size() - idx);
       }
 
    } // namespace Macros

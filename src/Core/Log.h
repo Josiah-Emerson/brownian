@@ -41,6 +41,10 @@ namespace Core{
    // returns a formatted string of the time since the program began
    std::string timeSinceprogramStart();
 
+   // shortens file path to relative to src/
+   // if not found just returns std::string { path }
+   std::string shortenFilePath(const char* path);
+
    } // namespace Macros
 } // namespace Core
 
@@ -52,7 +56,7 @@ namespace Core{
 #define FIG_LOG_LOW_WARNING(msg) FIG_LOG_WARNING(msg, LOW)
 #define FIG_LOG_MEDIUM_WARNING(msg) FIG_LOG_WARNING(msg, MEDIUM)
 #define FIG_LOG_HIGH_WARNING(msg) FIG_LOG_WARNING(msg, HIGH)
-#define FIG_ASSERT(msg) Core::Macros::figAssert(msg, FIG_FLF);
+#define FIG_ASSERT(condition, msg) static_cast<bool>(condition) ? void(0) : Core::Macros::figAssert(msg, FIG_FLF);
 #define FIG_LOG_OUTPUT_LOG_INFO Core::Macros::outputStats();
 
 #else

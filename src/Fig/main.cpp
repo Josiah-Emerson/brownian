@@ -6,7 +6,6 @@
 
 int main(){
    FIG_INITIALIZE_LOGGING
-
    Core::ApplicationSpec appSpec;
    appSpec.title = "Josiah's Fig";
 
@@ -15,6 +14,5 @@ int main(){
    app.pushLayer<GuiTestLayer>();
    // app.pushLayer<CameraRotateLayer>();
    app.run();
-
    FIG_LOG_OUTPUT_LOG_INFO
 }
