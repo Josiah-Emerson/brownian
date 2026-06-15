@@ -41,7 +41,7 @@ CameraRotateLayer::CameraRotateLayer()
       const PositionComponent* position = std::get<const PositionComponent*>(arg);
       const ScaleComponent* scale = std::get<const ScaleComponent*>(arg);
       const DirectionComponent* direction = std::get<const DirectionComponent*>(arg);
-      assert(direction && position && scale && "Direction, Position or Scale nullptr in MVP function callback");
+      FIG_ASSERT(direction && position && scale , "Direction, Position or Scale nullptr in MVP function callback")
 
       // TODO: This gets calculated for each call of this function, so we should probably 
       // change how we pass this value here 

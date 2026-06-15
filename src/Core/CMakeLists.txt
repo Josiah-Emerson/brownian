@@ -5,7 +5,6 @@ add_Library(${target})
 target_sources(${target} PRIVATE
    Application.cpp
    Layer.cpp
-   Log.cpp
 )
 
 add_subdirectory(ECS)

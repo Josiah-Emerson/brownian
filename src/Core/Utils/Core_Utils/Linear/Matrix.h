@@ -1,9 +1,9 @@
 #pragma once
 #include "Core_Utils/Concepts.h"
 #include "Core_Utils/Linear/Vector.h"
+#include "Core_Utils/Log.h"
 #include <cstddef>
 #include <cstring>
-#include <cassert>
 #include <initializer_list>
 #include <iostream>
 #include <type_traits>
@@ -156,7 +156,7 @@ namespace Core{
       template<typename T, std::size_t M, std::size_t N>
       requires(Concepts::numeric<T>)
       Matrix<T, M, N>::Matrix(std::initializer_list<Vector<T, N>> list){
-         assert(list.size() == M && "Amount of Vectors supplied does not match the amount of rows needed");
+         FIG_ASSERT(list.size() == M , "Amount of Vectors supplied does not match the amount of rows needed")
          constexpr std::size_t ROW_SIZE = N * sizeof(T); 
 
          std::size_t cnt { 0 };
@@ -230,8 +230,8 @@ namespace Core{
       requires(Concepts::numeric<T>)
       T& Matrix<T, M, N>::at(const std::size_t row, std::size_t col){
          // TODO: throw exception?
-         assert(row < M && "Row out of bounds");
-         assert(col < N && "Col out of bounds");
+         FIG_ASSERT(row < M , "Row out of bounds")
+         FIG_ASSERT(col < N , "Col out of bounds")
 
          return m_data[(row * N) + col];
       }
@@ -240,8 +240,8 @@ namespace Core{
       requires(Concepts::numeric<T>)
       const T& Matrix<T, M, N>::at(const std::size_t row, std::size_t col) const{
          // TODO: throw exception?
-         assert(row < M && "Row out of bounds");
-         assert(col < N && "Col out of bounds");
+         FIG_ASSERT(row < M , "Row out of bounds")
+         FIG_ASSERT(col < N , "Col out of bounds")
 
          return m_data[(row * N) + col];
       }

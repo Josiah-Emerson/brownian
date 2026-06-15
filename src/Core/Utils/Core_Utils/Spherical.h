@@ -1,6 +1,7 @@
 #pragma once 
 #include "Core_Utils/Concepts.h"
 #include "Core_Utils/Linear/Vector.h"
+#include "Core_Utils/Log.h"
 #include <cassert>
 #include <cmath>
 
@@ -37,16 +38,16 @@ namespace Core{
          if(phi < 0)
             phi += 2 * M_PI;
 
-         assert(theta >= 0 && theta <= M_PI && "Calculated theta out of expected range in cartesianToSpherical() function.");
-         assert(phi >= 0 && phi < (2 * M_PI) && "Calculated phi out of expected range in cartesianToSpherical() function.");
+         FIG_ASSERT(theta >= 0 && theta <= M_PI, "Calculated theta out of expected range in cartesianToSpherical() function.");
+         FIG_ASSERT(phi >= 0 && phi < (2 * M_PI) , "Calculated phi out of expected range in cartesianToSpherical() function.")
 
          return {r, theta, phi};
       }
 
       template<typename T, typename U> requires(Core::Concepts::numeric<T>)
       Core::Linear::Vector<U, 3> sphericalToCartesian(const Core::Linear::Vector<T, 3>& v){
-         assert(v[1] >= 0 && v[1] <= M_PI && "Supplied theta out of expected range in sphericalToCartesian() function.");
-         assert(v[2] >= 0 && v[2] < (2 * M_PI) && "Supplied phi out of expected range in sphericalToCartesian() function.");
+         FIG_ASSERT(v[1] >= 0 && v[1] <= M_PI , "Supplied theta out of expected range in sphericalToCartesian() function.")
+         FIG_ASSERT(v[2] >= 0 && v[2] < (2 * M_PI) , "Supplied phi out of expected range in sphericalToCartesian() function.")
 
          const U x = v[0] * std::sin(v[1]) * std::sin(v[2]);
          const U y = v[0] * std::cos(v[1]);

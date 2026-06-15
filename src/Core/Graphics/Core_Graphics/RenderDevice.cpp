@@ -43,7 +43,7 @@ namespace Core{
    }
 
    std::size_t RenderDevice::color3ToGraphicsColorType(const Color3& color, COLOR_PTR* ptr){
-      assert(ptr && "Do not pass nullptr as ptr");
+      FIG_ASSERT(ptr , "Do not pass nullptr as ptr")
       std::size_t size { 0 };
 #ifdef OPENGL
       float* tmp = new float[3];
@@ -54,7 +54,7 @@ namespace Core{
       size = sizeof(float) * 3;
 #endif
 
-      assert(ptr && "Color type for graphics not yet implemented in RenderDevice::color3ToGraphicsColorType");
+      FIG_ASSERT(ptr , "Color type for graphics not yet implemented in RenderDevice::color3ToGraphicsColorType")
       return size;
    }
 
