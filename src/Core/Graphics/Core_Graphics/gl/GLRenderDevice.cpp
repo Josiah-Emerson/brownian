@@ -68,7 +68,7 @@ namespace Core{
       std::shared_ptr<Model> currBoundModel { nullptr };
       for(const GraphicsComperand& u : gComps){
          if(u.prog != currBoundProgram){
-            assert(u.prog->useProgram() && "Error using program");
+            FIG_ASSERT(u.prog->useProgram() , "Error using program")
             currBoundProgram = u.prog;
          }
 
@@ -77,7 +77,7 @@ namespace Core{
                   [&u](const std::pair<const Model&, GLuint>& v){
                      return v.first == *(u.model);
                   });
-            assert(search != m_modelVAOList.end() && "Model in pool not found in RenderDevice list");
+            FIG_ASSERT(search != m_modelVAOList.end() , "Model in pool not found in RenderDevice list")
             m_openGL.glBindVertexArray(search->second);
             currBoundModel = u.model;
          }
@@ -101,7 +101,7 @@ namespace Core{
                         if(range == 0) // first encounter of a component pool containing entries
                            range = ranges[i];
 
-                        assert(range == ranges[i] && "Component pool has a different number of entries than the rest"); 
+                        FIG_ASSERT(range == ranges[i] , "Component pool has a different number of entries than the rest")
                      }
                   }
                }, components);
@@ -161,14 +161,14 @@ namespace Core{
             }
          case(UNKNOWN):
          default: 
-            assert(false && "Unknown ShaderDataType encounted in getDataPtr func");
+            FIG_ASSERT(false , "Unknown ShaderDataType encounted in getDataPtr func")
       }
 
       return data;
    }
 
    void GLRenderDevice::deleteDataPtr(void* ptr, ShaderDataType type){
-      assert(ptr && "nullptr passed to GLRenderDevice::deleteDataPtr");
+      FIG_ASSERT(ptr , "nullptr passed to GLRenderDevice::deleteDataPtr")
       switch(type){
          case(INT):
             {
@@ -202,7 +202,7 @@ namespace Core{
             }
          case(UNKNOWN):
          default: 
-            assert(false && "Unknown ShaderDataType encounted in deleteDataPtr func");
+            FIG_ASSERT(false , "Unknown ShaderDataType encounted in deleteDataPtr func")
       }
    }
 

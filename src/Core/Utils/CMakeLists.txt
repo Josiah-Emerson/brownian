@@ -6,6 +6,7 @@ add_library("Core::${dir}" ALIAS ${target})
 
 # SOURCES
 target_sources(${target} PRIVATE
+   ${target}/Log.cpp
    ${target}/Linear/MatrixTransform.cpp
 )
 

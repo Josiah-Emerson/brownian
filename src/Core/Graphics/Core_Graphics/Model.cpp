@@ -1,5 +1,5 @@
 #include "Model.h"
-#include <cassert>
+#include "Core_Utils/Log.h"
 
 namespace Core{
    bool Model::operator==(const Model& other) const{
@@ -8,7 +8,7 @@ namespace Core{
 
    void Model::calcTriangles(){
       // TODO: For now no EBO (?) stuff. Maybe we won't need it since we probably wont have high res models for a while 
-      assert((m_vertexData.size() % 3 == 0) && !m_vertexData.empty() && "Number of vertices is either 0 or not a multiple of three");
+      FIG_ASSERT((m_vertexData.size() % 3 == 0) && !m_vertexData.empty() , "Number of vertices is either 0 or not a multiple of three")
       m_triangles = m_vertexData.size() / 3;
    }
 } // namespace Core

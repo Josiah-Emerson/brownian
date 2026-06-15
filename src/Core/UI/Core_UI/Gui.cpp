@@ -1,5 +1,6 @@
 #include "Gui.h"
 #include "Core_Utils/Linear/Vector.h"
+#include "Core_Utils/Log.h"
 #include "imgui.h"
 #include "../Application.h"
 
@@ -80,11 +81,11 @@ namespace Core{
       m_renderDrawDataFunc = ImGui_ImplOpenGL3_RenderDrawData;
       m_graphicImplNewFrame = ImGui_ImplOpenGL3_NewFrame;
 #endif 
-      assert(m_imGuiContext && 
+      FIG_ASSERT(m_imGuiContext && 
             m_renderDrawDataFunc && 
-            m_graphicImplNewFrame &&
-            m_windowImplNewFrame &&
-            "nullptrs");
+            m_graphicImplNewFrame && 
+            m_windowImplNewFrame , 
+            "nullptrs")
    }
 
    void GuiImpl::addSeparator(){
@@ -159,7 +160,7 @@ namespace Core{
    }
 
    void GuiImpl::endGroup(){
-      assert(m_groupStackSize > 0);
+      FIG_ASSERT(m_groupStackSize > 0, "m_groupStackSize not > 0")
       ImGui::TreePop();
       --m_groupStackSize;
    }

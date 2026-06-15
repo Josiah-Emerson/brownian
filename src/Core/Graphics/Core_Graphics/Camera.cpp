@@ -75,8 +75,8 @@ namespace Core{
                m_look[2] -= 2 * M_PI;
          }
       }
-      assert(m_look[1] >= 0 && m_look[1] <= M_PI && "Theta offset not updated properly");
-      assert(m_look[2] >= 0 && m_look[2] < 2 * M_PI && "Phi offset not updated properly");
+      FIG_ASSERT(m_look[1] >= 0 && m_look[1] <= M_PI , "Theta offset not updated properly")
+      FIG_ASSERT(m_look[2] >= 0 && m_look[2] < 2 * M_PI , "Phi offset not updated properly")
    }
 
    Linear::fmat4 Camera::projectionMatrix() const{

@@ -1,8 +1,8 @@
 #pragma once
 #include "Core_Utils/Concepts.h"
 #include "Core_Utils/Types.h"
+#include "Core_Utils/Log.h"
 #include <algorithm>
-#include <cassert>
 #include <concepts>
 #include <map>
 #include <stdexcept>
@@ -249,7 +249,7 @@ namespace Core{
                return (idx >= v.second.first) && (idx <= v.second.second);
             });
       // TODO: in here to check any logic errors, but the contains !contains return early for any data members so it should be found
-      assert(searchIter != m_separatorList.end() && "Error in SortedComponentPool::remove function. This pool was found to contain id however its index was not found in SeparatorList");
+      FIG_ASSERT(searchIter != m_separatorList.end(),  "This pool was found to contain id however its index was not found in SeparatorList")
 
       // decrement indices in ID to Index map
       decrementInvalidIndices(idx + 1);
@@ -260,7 +260,7 @@ namespace Core{
       Separator& separator = searchIter->second;
       if(separator.second <= separator.first){ // only one element (if ==, but if less than then something def went wrong)
          // TODO: get rid of this as well but just a sanity check
-         assert((separator.first == separator.second) && "Somehow lower index was higher than higher index for separator in SortedComponentPool");
+         FIG_ASSERT((separator.first == separator.second), "Somehow lower index was higher than higher index for separator in SortedComponentPool")
          m_separatorList.erase(searchIter->first);
       }else{
          --separator.second;
@@ -280,7 +280,7 @@ namespace Core{
    CLASS_TEMPLATE
    std::size_t SortedComponentPool<Component, Compare, U>::size() const{
       // TODO: remove assert
-      assert(m_data.size() == m_idToIndexMap.size() && "data and idToIndexMap report different sizes");
+      FIG_ASSERT(m_data.size() == m_idToIndexMap.size(), "data and idToIndexMap report different sizes")
       return m_data.size();
    }
 

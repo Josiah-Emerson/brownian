@@ -1,7 +1,7 @@
 #pragma once
 #include "Core_Utils/Concepts.h"
 #include "Core_Utils/Linear/Matrix.h"
-#include <cassert>
+#include "Core_Utils/Log.h"
 #include <cmath>
 #include <concepts>
 #include <initializer_list>
@@ -183,7 +183,7 @@ namespace Core{
       requires(Concepts::numeric<T>)
       Vector<T, N>::Vector(std::initializer_list<T> vals){
          // TODO: Should we just throw an exception here?
-         assert(vals.size() <= N && "Values given is larger than size of the vector");
+         FIG_ASSERT(vals.size() <= N , "Values given is larger than size of the vector")
 
          for(std::size_t i { 0 }; i < vals.size(); ++i){
             m_data[i] = vals.begin()[i];
@@ -267,7 +267,7 @@ namespace Core{
       requires(Concepts::numeric<T>)
       T& Vector<T, N>::operator[](std::size_t i){
          // TODO: Should we just throw an exception here?
-         assert(i < N && "Out of bounds");
+         FIG_ASSERT(i < N , "Out of bounds")
          return m_data[i];
       }
 
@@ -276,7 +276,7 @@ namespace Core{
       requires(Concepts::numeric<T>)
       const T& Vector<T, N>::operator[](std::size_t i) const {
          // TODO: Should we just throw an exception here?
-         assert(i < N && "Out of bounds");
+         FIG_ASSERT(i < N , "Out of bounds")
          return m_data[i];
       }
 
@@ -302,8 +302,8 @@ namespace Core{
       void Vector<T,N>::normalize(){
          // TODO: For now just assert out if T is an int I guess? At some point would be nice to either 
          // delete normalize() from Vector<int, N> but this might require some annoying inheritance hacking
-         assert((!std::is_same_v<T, int>) && "normalizing vector of type int will most likely result in an undesired vector. Try using unitVector() with a floating point type");
-         assert((std::is_floating_point_v<T>) && "vector type is not a floating point type, and normalization will likely result in undesired vector");
+         FIG_ASSERT((!std::is_same_v<T, int>) , "normalizing vector of type int will most likely result in an undesired vector. Try using unitVector() with a floating point type")
+         FIG_ASSERT((std::is_floating_point_v<T>) , "vector type is not a floating point type, and normalization will likely result in undesired vector")
          double mag { magnitude() };
          for(std::size_t i { 0 }; i < N; ++i){
             m_data[i] /= mag;

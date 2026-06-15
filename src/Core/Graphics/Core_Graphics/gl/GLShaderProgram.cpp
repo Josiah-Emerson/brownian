@@ -1,8 +1,8 @@
 #include "Core_Graphics/gl/GLShaderProgram.h"
 #include "Core_Graphics/ShaderProgram.h"
 #include "Core_Graphics/gl/GLShader.h"
+#include "Core_Utils/Log.h"
 #include <algorithm>
-#include <cassert>
 
 // IMPORTANT NOTE: see NOTE in addShader before implementing any function which would need to advance the m_stage
 // Should check to make sure we are in the correct state at the beginning of any of these functions
@@ -52,7 +52,7 @@ namespace Core{
       // TODO: Probably remove from release build? dynamic cast has some overhead compared to a static cast, and 
       // at least in my head, the only shaders that should be passed to this function come from a GL implementation and thus should be a GLShader.
       // but hopefully if thats not the case this will catch it
-      assert(dynamic_cast<GLShader*>(shader.get()) != nullptr && "INTERNAL ERROR in GLShaderProgram::addShader(std::shared_ptr<Shader> shader): shader is not of type GLShader, and failed a dynamic cast.");
+      FIG_ASSERT(dynamic_cast<GLShader*>(shader.get()) != nullptr , "INTERNAL ERROR: shader is not of type GLShader, and failed a dynamic cast.")
       auto glShader = static_cast<GLShader*>(shader.get());
       const GLuint shaderID = glShader->getShaderID();
       m_openGL.glAttachShader(m_ID, shaderID);
@@ -197,9 +197,11 @@ namespace Core{
          case(DOUBLE): return GL_DOUBLE;
          case(F_VEC3): return GL_FLOAT_VEC3;
          case(F_MAT4): return GL_FLOAT_MAT4;
-         case(UNKNOWN): assert(false && "Not sure what GLenum to return from UNKNOWN ShaderDataType."); // TODO: probably don't actually want to assert, but fine for now
-         default: assert(false && "Wow we have an undhandled ShaderDataType!!\n");
+         case(UNKNOWN): FIG_ASSERT(false , "Not sure what GLenum to return from UNKNOWN ShaderDataType.") // TODO: If we remove these asserts, we need to update the lower retun statement
+         default:  FIG_ASSERT(false , "Wow we have an undhandled ShaderDataType!!\n")
       }
+
+      return GL_INT; // just so we don't get a compiler warning. IF WE REMOVE THE ASSERTS UP THEN WE NEED TO FIGURE OUT WHAT WE NEED TO RETURN
    }
 
    bool GLShaderProgram::setUniformCallback(std::string_view name, UniformVariableSetterFunction callback){

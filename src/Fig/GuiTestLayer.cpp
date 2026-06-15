@@ -32,7 +32,7 @@ GuiTestLayer::GuiTestLayer()
       const PositionComponent* position = std::get<const PositionComponent*>(arg);
       const ScaleComponent* scale = std::get<const ScaleComponent*>(arg);
       const DirectionComponent* direction = std::get<const DirectionComponent*>(arg);
-      assert(position && scale && direction);
+      FIG_ASSERT(position && scale && direction, "One of the components was not found")
 
       auto V = cam.viewMatrix();
       auto P = cam.projectionMatrix();
@@ -44,7 +44,7 @@ GuiTestLayer::GuiTestLayer()
    auto color = [](void** data, Arg arg, std::size_t offset){
       using namespace Core;
       const ColorComponent* color = std::get<const ColorComponent*>(arg);
-      assert(color);
+      FIG_ASSERT(color, "Color Component pool not found")
 
       RenderDevice::COLOR_PTR colPtr;
       std::size_t size = RenderDevice::color3ToGraphicsColorType(color->val, &colPtr);
