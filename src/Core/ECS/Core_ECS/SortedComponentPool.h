@@ -1,4 +1,5 @@
 #pragma once
+#include "Core_ECS/Components.h"
 #include "Core_Utils/Concepts.h"
 #include "Core_Utils/Types.h"
 #include "Core_Utils/Log.h"
@@ -23,7 +24,7 @@
 
 namespace Core{
 #define CLASS_TEMPLATE template<typename Component, typename Compare, typename U> \
-   requires(Concepts::is_component<Component> &&  \
+   requires(Concepts::is_instance_of_template_v<Component, Core::Component> &&  \
             std::strict_weak_order<Compare, U, U> && \
             Concepts::is_equality_comparable<U>)
             

@@ -1,5 +1,6 @@
 #pragma once
 #include "Core_ECS/SortedComponentPool.h"
+#include "Core_ECS/Components.h"
 #include "Core_Utils/Concepts.h"
 #include "Core_Utils/Types.h"
 #include "SortedComponentPool.h"
@@ -42,7 +43,7 @@ namespace Core{
    // pass a function pointer from RenderDevice to ensure that ShaderProgram and Model are both registered
 
 #define CLASS_TEMPLATE template<typename U, typename Compare, typename... Components> \
-   requires((Concepts::is_component<Components> && ...) && \
+   requires((Concepts::is_instance_of_template_v<Components, Component> && ...) && \
    (Concepts::all_types_unique<Components...>) && \
    std::strict_weak_order<Compare, U, U>)
    

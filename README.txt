@@ -3,16 +3,57 @@ Things to think about:
    2) Will probably need to think about refactoring so that all the components go in their own place, 
    and then the Graphics specific ComponentPack is defined somewhere else? Just doesn't seem the best rn
 
-NEXT STEP: Implement Solvers
+BIG (NOT FUN) TODO: Redo the graphics stuff so it is not so terrible
+   - We want the data to be sorted by graphics comperands for drawing, but what if we don't an entity 
+   to have a prog or a mdoel? Empty ShaderProgram and Model ?
+   - Need to refactor so that the layer defines its compoents 
+   - Road Map: 
+      A) Refactor GraphicsComponents.h into a Component.h file in Core_ECS which has things like the 
+      Component struct, component tags, and then definitions for PositionComponent, DirectionComponent, 
+      and so on. Perhaps keep the component pack, and then decide if we want the unpacking structs like 
+      create registry and what not. Have component pack ensure that the types past to it are Components ?
+      B) If not there add to SortedRegistry and ComponentPool a compile time check to ensure they are components, 
+      or have it only take a ComponentPack type ?
+      C) Make the Layer class define what components it wants
+      D) Make RenderDevice become templated so that we can pass a general Registry to it 
+      E) Make a way to add entities with a 'null' comperand (honestly could just be nullptr)
+
+NEXT STEP: Create a physics systems 
+   - This tracks all the particles in its system, and is responsible for things like force repulsion. This system is responsible 
+   for calculating the various forces each element may feel, as well as how this is done. For example: In a system of particles it can 
+   partition the system into a grid and only check a certain amount of surrounding cells for inter-particle repulsion forces so as to 
+   not result in an O(n^2) check time every single frame. Or it could take a different approach, but it is responsible for calculating 
+   and updating the forces 
+   - Will also track system stats like energy and stuff of that nature 
+   - Question: Lets say we have 10 objects that react to gravity and other forces. If we want these to rebound off the floor, how do 
+   we add the floor to our system so that it is not affected by gravity, and just stays there?
+   ANSWER: body types: Static (the floor) which does not get updated due to forces, Dynamic (the particles) move and react to forces, 
+   Kinematic (later): objects controlled by a specific function, script, or other method which means they do move, but not according to 
+   the usual forces
+   - Question: What do we want this API to look like? Add entity IDs in and their body type? 
+   - Question: For the registry/component pools, how can we ensure that the registry has the correct component (i.e. position/velo)? How 
+   do we ensure that if an entity has that component, it does not get removed accidentally? If an entity in the system doesn't have an entry 
+   what should we do? (Partial answer: I think we, for now, log when this happens)
+
+NEXT NEXT STEP: Implement Solvers
    - Decide how to partition solvers. Questions to ask:
       - Should we have on single base Solver class which Solvers (and sub-classes of solvers) inherit? 
       OR should we have a class for solvers which do Brownian motion vs other types of physical systems 
+ANSWER: 
+   - Something like this: 
+      class Solver; class GenericEulerMaruyama : Solver; class BrownianMotionEulerMaruyama : GenericEulerMaruyama;
+      where BMEM would specify would specifiy the functions it needed, and give the ability to define what constants 
+      the user could control?
+
       - If we keep all solvers together should we add an enum for selecting the solver type?
+ANSWER: 
+   I think an enum with values like SDE, ODE, etc?
+
       - How do we define what a user needs to provide for these? Will they need the same inputs? 
       - Do we let the user provide a function for the 'stepper functions' or only give them control over 
       variables within those said functions? 
-
-BIG (NOT FUN) TODO: Redo the graphics stuff so it is not so terrible
+      - Maybe like a static assert and then the RenderDevice (or whatever needs it) can tell you what 
+      types it needs to contain. How to do the stuff with validating GraphicsComperands though? TBD
 
 TODO: There is a way to use our own math class with ImGui
 TODO: Do some stuff in Camera class with LOCKED vs DIRECTIONAL
