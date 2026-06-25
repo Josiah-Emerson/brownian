@@ -1,4 +1,5 @@
 #pragma once
+#include "Core_Graphics/AssetManager.h"
 #include "Core_Utils/Concepts.h"
 #include "Core_Utils/Linear/Vector.h"
 #include "Core_Utils/Types.h"
@@ -23,11 +24,15 @@ namespace Core{
    struct DirectionTag {};
    struct ScaleTag {};
    struct ColorTag {};
+   struct MeshTag {};
+   struct MaterialTag {};
 
    using PositionComponent = Component<Linear::fvec3, PositionTag>;
    using DirectionComponent = Component<Linear::fvec3, DirectionTag>;
    using ScaleComponent = Component<Linear::fvec3, ScaleTag>;
    using Color3Component = Component<Color3, ColorTag>;
+   using MeshComponent = Component<MeshHandle, MeshTag>;
+   using MaterialComponent = Component<MaterialHandle, MaterialTag>;
 
    template<typename... Components> 
    requires(Concepts::is_instance_of_template_v<Components, Component> && ...)

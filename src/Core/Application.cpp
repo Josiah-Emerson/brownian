@@ -9,14 +9,19 @@ namespace Core{
    // NOTE: appSpec has a default initialization if nothing is passed in
    Application::Application(const ApplicationSpec& appSpec)
       : m_specification { appSpec }
+      , m_device { nullptr }
+      , m_assetManager { nullptr }
    {
       s_application = this;
       m_specification.windowSpec.eventCallback = [this](Core::Events::Event& event) { raiseEvent(event); };
       m_window = Core::Window::createWindow(m_specification.windowSpec);
+      m_device = RenderDevice::create(*m_window);
+      m_assetManager = std::make_unique<AssetManager>(m_device.get());
    }
 
    Application::~Application(){
       // TODO: anything else?
+      // TODO: Huge TODO with clean up of devices and layers and saving
       s_application = nullptr;
    }
 

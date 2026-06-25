@@ -1,10 +1,25 @@
 #pragma once
-
 #include <string>
 #ifndef NDEBUG
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
+
+// TODO: If you put a message in a destructor for something, and the OUTPUT_STATS 
+// is called before the end of the scope, then the count of messages will likely be off,
+// although the messages are still recorded. Example: consider the class Foo, where a message 
+// is logged in both constructor in destructor. The following pseudo code would result in an output 
+// stating there is only one message, but checking the log file will result in the expected 2 logs 
+// because the stat output was called prior than the destructor for the class Foo:
+/*
+   int main(){
+      FIG_INITIALIZE_LOGGING
+      class Foo { }; // constructor is called and the message is logged
+      // ... do whatever or nothing
+      FIG_LOG_OUTPUT_LOG_INFO // log info is ouptut (i.e. message count is 1)
+   } // Foo destructor is called, and another message is logged
+ */
+
 namespace Core{
    namespace Macros{
       enum class WarningLevel{
@@ -69,5 +84,5 @@ namespace Core{
 #define FIG_LOG_MEDIUM_WARNING(msg)
 #define FIG_LOG_HIGH_WARNING(msg)
 #define FIG_ASSERT(msg)
-#define FIG_OUTPUT_STATS
+#define FIG_LOG_OUTPUT_LOG_INFO 
 #endif

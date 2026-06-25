@@ -10,6 +10,7 @@
 #include <imgui.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_x11.h>
+#include "Core_Utils/Log.h"
 
 namespace Core{
    // NOTE: spec can be a default param (see header file), but cannot be redefined here
@@ -96,7 +97,8 @@ namespace Core{
          // For now we will just pass the event here and the layer can either choose to listen if io wants it or not. 
          // NOTE: Possible issue: ImGui uses this event but a layer higher up which doesn't care about imgui handles the event. In this case both the layer 
          // and imgui 'handle' or use this event which is probably not what we want
-         ImGui_ImplX11_ProcessEvent(&event);
+         // ImGui_ImplX11_ProcessEvent(&event);
+         FIG_LOG_HIGH_WARNING("UNCOMMENT ABOVE LINE FOR GUI")
          std::vector<Events::Event> events = translateXEventToFigEvents(&event);
 
          for(Events::Event& e : events){

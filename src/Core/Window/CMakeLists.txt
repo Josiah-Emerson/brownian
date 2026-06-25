@@ -23,5 +23,8 @@ endif()
 
 # TODO: Will need to move this to somewhere higher that also used opengl
 find_package(OpenGL REQUIRED)
-target_link_libraries(${target} PRIVATE OpenGL::GL) # OpenGL::GLU may be needed in future
+target_link_libraries(${target} PRIVATE 
+   OpenGL::GL
+   Core::Utils
+) # OpenGL::GLU may be needed in future
 

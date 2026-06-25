@@ -46,9 +46,12 @@ namespace Core{
    requires((Concepts::is_instance_of_template_v<Components, Component> && ...) && \
    (Concepts::all_types_unique<Components...>) && \
    std::strict_weak_order<Compare, U, U>)
+
+   CLASS_TEMPLATE
+   class SortedRegistry;
    
    CLASS_TEMPLATE
-   class SortedRegistry{
+   class SortedRegistry<U, Compare, ComponentPack<Components...>>{
       public: 
          SortedRegistry(std::size_t numEntities = 1000);
 
@@ -156,7 +159,7 @@ namespace Core{
    
    // NOTE: numEntities has a default value
    CLASS_TEMPLATE 
-   SortedRegistry<U, Compare, Components...>::SortedRegistry(std::size_t numEntities)
+   SortedRegistry<U, Compare, ComponentPack<Components...>>::SortedRegistry(std::size_t numEntities)
       : m_pools { }
       , m_entitiesToComperandMap { }
    {
@@ -168,14 +171,14 @@ namespace Core{
    }
 
    CLASS_TEMPLATE
-   SortedRegistry<U, Compare, Components...>::SortedRegistry(std::function<bool(const U&)> comperandValidatorFunc, std::size_t numEntities)
+   SortedRegistry<U, Compare, ComponentPack<Components...>>::SortedRegistry(std::function<bool(const U&)> comperandValidatorFunc, std::size_t numEntities)
       : SortedRegistry {numEntities}
    {
       m_comperandValidatorFunc = std::move(comperandValidatorFunc);
    }
 
    CLASS_TEMPLATE
-   EntityID SortedRegistry<U, Compare, Components...>::registerNewEntity(const U& comperand){
+   EntityID SortedRegistry<U, Compare, ComponentPack<Components...>>::registerNewEntity(const U& comperand){
       if(!m_comperandValidatorFunc(comperand)){
          throw std::runtime_error("Comperand passed to registerNewEntity() in SortedRegistry fails the comperand validator check");
       }
@@ -192,7 +195,7 @@ namespace Core{
    CLASS_TEMPLATE
    template<typename... Args> requires((Concepts::is_in_pack<Args, Components...> && ...) && 
                                        (Concepts::all_types_unique<Args...>))
-   EntityID SortedRegistry<U, Compare, Components...>::registerNewEntity(const U& comperand, Args&&... args){
+   EntityID SortedRegistry<U, Compare, ComponentPack<Components...>>::registerNewEntity(const U& comperand, Args&&... args){
       if(!m_comperandValidatorFunc(comperand)){
          throw std::runtime_error("Comperand passed to registerNewEntity() in SortedRegistry fails the comperand validator check");
       }
@@ -210,7 +213,7 @@ namespace Core{
    }
 
    CLASS_TEMPLATE
-   void SortedRegistry<U, Compare, Components...>::setComperandValidatorFunction(std::function<bool(const U&)> func){
+   void SortedRegistry<U, Compare, ComponentPack<Components...>>::setComperandValidatorFunction(std::function<bool(const U&)> func){
       // TODO: what happens if there are already elements in registry ? 
       // Should we not allow a set if it contains any elements? 
       // Should we check all elements to ensure their comperands are fine?
@@ -218,12 +221,12 @@ namespace Core{
    }
 
    CLASS_TEMPLATE
-   bool SortedRegistry<U, Compare, Components...>::containsEntity(const EntityID id) const{
+   bool SortedRegistry<U, Compare, ComponentPack<Components...>>::containsEntity(const EntityID id) const{
       return m_entitiesToComperandMap.contains(id);
    }
 
    CLASS_TEMPLATE
-   void SortedRegistry<U, Compare, Components...>::unregisterEntity(const EntityID id){
+   void SortedRegistry<U, Compare, ComponentPack<Components...>>::unregisterEntity(const EntityID id){
       removeComponents<Components...>(id);
       m_entitiesToComperandMap.erase(id);
    }
@@ -231,7 +234,7 @@ namespace Core{
    CLASS_TEMPLATE
    template<typename... Args> requires((Concepts::is_in_pack<Args, Components...> && ...) &&
                                        (Concepts::all_types_unique<Args...>))
-   bool SortedRegistry<U, Compare, Components...>::addComponents(const EntityID id, Args&&... args){
+   bool SortedRegistry<U, Compare, ComponentPack<Components...>>::addComponents(const EntityID id, Args&&... args){
       if(!containsEntity(id))
          return false;
 
@@ -240,7 +243,7 @@ namespace Core{
 
    CLASS_TEMPLATE
    template<typename T> requires(Concepts::is_in_pack<T, Components...>)
-   bool SortedRegistry<U, Compare, Components...>::addComponent(const EntityID id, T&& component){
+   bool SortedRegistry<U, Compare, ComponentPack<Components...>>::addComponent(const EntityID id, T&& component){
       if(!containsEntity(id))
          return false;
 
@@ -251,7 +254,7 @@ namespace Core{
    CLASS_TEMPLATE
    template<typename... Args> requires((Concepts::is_in_pack<Args, Components...> && ...) &&
                                        (Concepts::all_types_unique<Args...>))
-   bool SortedRegistry<U, Compare, Components...>::updateComponents(const EntityID id, Args&&... args){
+   bool SortedRegistry<U, Compare, ComponentPack<Components...>>::updateComponents(const EntityID id, Args&&... args){
       if(!containsEntity(id))
          return false;
 
@@ -260,7 +263,7 @@ namespace Core{
 
    CLASS_TEMPLATE
    template<typename T> requires(Concepts::is_in_pack<T, Components...>)
-   bool SortedRegistry<U, Compare, Components...>::updateComponent(const EntityID id, T&& component){
+   bool SortedRegistry<U, Compare, ComponentPack<Components...>>::updateComponent(const EntityID id, T&& component){
       if(!containsEntity(id))
          return false;
 
@@ -269,7 +272,7 @@ namespace Core{
    }
 
    CLASS_TEMPLATE
-   void SortedRegistry<U, Compare, Components...>::updateComperand(const EntityID id, const U& comperand){
+   void SortedRegistry<U, Compare, ComponentPack<Components...>>::updateComperand(const EntityID id, const U& comperand){
       if(!m_comperandValidatorFunc(comperand)){
          throw std::runtime_error("Comperand passed to updateComperand() in SortedRegistry fails the comperand validator check");
       }
@@ -290,55 +293,55 @@ namespace Core{
    CLASS_TEMPLATE
    template<typename... Args> requires((Concepts::is_in_pack<Args, Components...> && ...) && 
                               (Concepts::all_types_unique<Args...>))
-   void SortedRegistry<U, Compare, Components...>::removeComponents(const EntityID id){
+   void SortedRegistry<U, Compare, ComponentPack<Components...>>::removeComponents(const EntityID id){
       (removeComponent<Args>(id) , ...);
    }
 
    CLASS_TEMPLATE
    template<typename T> requires(Concepts::is_in_pack<T, Components...>)
-   void SortedRegistry<U, Compare, Components...>::removeComponent(const EntityID id){
+   void SortedRegistry<U, Compare, ComponentPack<Components...>>::removeComponent(const EntityID id){
       SortedComponentPool<T, Compare, U>& pool = getPool<T>();
       pool.remove(id);
    }
 
    CLASS_TEMPLATE
    template<typename T> requires(Concepts::is_in_pack<T, Components...>)
-   SortedComponentPool<T, Compare, U>& SortedRegistry<U, Compare, Components...>::getPool(){
+   SortedComponentPool<T, Compare, U>& SortedRegistry<U, Compare, ComponentPack<Components...>>::getPool(){
       return std::get<SortedComponentPool<T, Compare, U>>(m_pools);
    }
 
    CLASS_TEMPLATE 
    template<typename T> requires(Concepts::is_in_pack<T, Components...>)
-   const SortedComponentPool<T, Compare, U>& SortedRegistry<U, Compare, Components...>::getPool() const{
+   const SortedComponentPool<T, Compare, U>& SortedRegistry<U, Compare, ComponentPack<Components...>>::getPool() const{
       return std::get<SortedComponentPool<T, Compare, U>>(m_pools);
    }
 
    CLASS_TEMPLATE 
    template<typename T> requires(Concepts::is_in_pack<T, Components...>)
-   T* SortedRegistry<U, Compare, Components...>::getContiguousComponentData() {
+   T* SortedRegistry<U, Compare, ComponentPack<Components...>>::getContiguousComponentData() {
       SortedComponentPool<T, Compare, U>& pool = getPool<T, Compare, U>();
       return pool.contiguousData();
    }
 
    CLASS_TEMPLATE 
    template<typename T> requires(Concepts::is_in_pack<T, Components...>)
-   const T* SortedRegistry<U, Compare, Components...>::getContiguousComponentData() const{
+   const T* SortedRegistry<U, Compare, ComponentPack<Components...>>::getContiguousComponentData() const{
       const SortedComponentPool<T, Compare, U>& pool = getPool<T, Compare, U>();
       return pool.contiguousData();
    }
 
    CLASS_TEMPLATE
-   U& SortedRegistry<U, Compare, Components...>::getComperand(const EntityID id){
+   U& SortedRegistry<U, Compare, ComponentPack<Components...>>::getComperand(const EntityID id){
       return m_entitiesToComperandMap.at(id);
    }
 
    CLASS_TEMPLATE
-   const U& SortedRegistry<U, Compare, Components...>::getComperand(const EntityID id) const{
+   const U& SortedRegistry<U, Compare, ComponentPack<Components...>>::getComperand(const EntityID id) const{
       return m_entitiesToComperandMap.at(id);
    }
 
    CLASS_TEMPLATE
-   std::vector<U> SortedRegistry<U, Compare, Components...>::getAllComperands() const{
+   std::vector<U> SortedRegistry<U, Compare, ComponentPack<Components...>>::getAllComperands() const{
       std::vector<U> ret {};
       for(const std::pair<EntityID, U>& element : m_entitiesToComperandMap){
          if(std::find(ret.begin(), ret.end(), element.second) == ret.end())
@@ -357,7 +360,7 @@ namespace Core{
     */
 
    CLASS_TEMPLATE
-   void SortedRegistry<U, Compare, Components...>::internalReserve(std::size_t n){
+   void SortedRegistry<U, Compare, ComponentPack<Components...>>::internalReserve(std::size_t n){
       std::apply(
             [n](SortedComponentPool<Components, Compare, U>&... pools){
                (pools.reserve(n), ...);

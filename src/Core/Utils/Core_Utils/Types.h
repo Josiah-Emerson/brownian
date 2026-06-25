@@ -12,4 +12,6 @@ namespace Core{
       std::uint8_t G;
       std::uint8_t B;
    };
+
+   // TODO: Create Color4 type, and allow for casting from color3 to color4
 } // namespace Core

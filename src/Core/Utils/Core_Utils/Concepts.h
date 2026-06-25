@@ -30,8 +30,8 @@ namespace Core{
       template<typename T, template<typename...> class Target>
       struct is_instance_of_template : std::false_type {};
 
-      template<template<typename...> class Target, typename... Types>
-      struct is_instance_of_template<Target<Types...>, Target>: std::true_type {};
+      template<template<typename...> class Target, typename... Args>
+      struct is_instance_of_template<Target<Args...>, Target>: std::true_type {};
 
       // Checks if type T is an instance of a template Target
       template<typename T, template<typename...> class Target>

@@ -6,11 +6,13 @@ add_library("Core::${dir}" ALIAS ${target})
 
 # SOURCES
 target_sources(${target} PRIVATE
-   ${target}/AssetManager.cpp
    ${target}/Camera.cpp
-   ${target}/Mesh.cpp
+   ${target}/Model.cpp
    ${target}/RenderDevice.cpp
+   ${target}/ShaderProgram.cpp
    ${target}/gl/GLRenderDevice.cpp
+   ${target}/gl/GLShader.cpp
+   ${target}/gl/GLShaderProgram.cpp
    ${target}/gl/OpenGL.cpp
 )
 
@@ -19,7 +21,6 @@ target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # LINK TO LIBRARIES
 target_link_libraries(${target} PRIVATE
-   Core::ECS
+   Core
    Core::Utils
-   Core::Window
 )
