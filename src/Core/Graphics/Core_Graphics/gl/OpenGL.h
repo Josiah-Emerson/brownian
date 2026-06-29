@@ -8,10 +8,14 @@ namespace Core{
    // Typedefs 
    typedef void (APIENTRYP PFNGLATTACHSHADERPROC) (GLuint program, GLuint shader);
    typedef void (APIENTRYP PFNGLBINDBUFFERPROC) (GLenum target, GLuint buffer);
+   typedef void (APIENTRYP PFNGLBINDBUFFERBASEPROC) (GLenum target, GLuint index, GLuint buffer);
    typedef void (APIENTRYP PFNGLBINDVERTEXARRAYPROC) (GLuint array);
-   typedef void (APIENTRYP PFNGLBUFFERDATAPROC) (GLenum target, GLsizeiptr size, const void* data, GLenum usage); typedef void (APIENTRYP PFNGLCOMPILESHADERPROC) (GLuint shader);
+   typedef void (APIENTRYP PFNGLBUFFERDATAPROC) (GLenum target, GLsizeiptr size, const void* data, GLenum usage); 
+   typedef void (APIENTRYP PFNGLBUFFERSUBDATAPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const void * data);
+   typedef void (APIENTRYP PFNGLCOMPILESHADERPROC) (GLuint shader);
    typedef void (APIENTRYP PFNGLCLEARPROC) (GLbitfield mask);
    typedef void (APIENTRYP PFNGLCLEARCOLORPROC) (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+   typedef void (APIENTRYP PFNGLCLEARDEPTHFPROC) (GLfloat depth);
    typedef GLuint (APIENTRYP PFNGLCREATEPROGRAMPROC) (void);
    typedef GLuint (APIENTRYP PFNGLCREATESHADERPROC) (GLenum shaderType);
    typedef void (APIENTRYP PFNGLDELETEPROGRAMPROC) (GLuint program);
@@ -24,6 +28,8 @@ namespace Core{
    typedef void (APIENTRYP PFNGLGENVERTEXARRAYSPROC) (GLsizei n, GLuint *arrays);
    typedef void (APIENTRYP PFNGLGETACTIVEATTRIBPROC) (GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
    typedef void (APIENTRYP PFNGLGETACTIVEUNIFORMPROC) (GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
+   typedef void (APIENTRYP PFNGLGETACTIVEUNIFORMBLOCKIVPROC) (GLuint program, GLuint uniformBlockIndex, GLenum pname, GLint *params);
+   typedef void (APIENTRYP PFNGLGETACTIVEUNIFORMBLOCKNAMEPROC) (GLuint program, GLuint uniformBlockIndex, GLsizei bufSize, GLsizei *length, GLchar *uniformBlockName);
    typedef void (APIENTRYP PFNGLGETATTACHEDSHADERSPROC) (GLuint program, GLsizei maxCount, GLsizei *count, GLuint *shaders);
    typedef void (APIENTRYP PFNGLGETPROGRAMINFOLOGPROC) (GLuint program, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
    typedef void (APIENTRYP PFNGLGETPROGRAMIVPROC) (GLuint program, GLenum pname, GLint *params);
@@ -34,6 +40,7 @@ namespace Core{
    typedef void (APIENTRYP PFNGLLINKPROGRAMPROC) (GLuint program);
    typedef void (APIENTRYP PFNGLSHADERSOURCEPROC) (GLuint shader, GLsizei count, const GLchar **string, const GLint *length);
    typedef void (APIENTRYP PFNGLUNIFORM3FVPROC) (GLint location, GLsizei count, const GLfloat *value);
+   typedef void (APIENTRYP PFNGLUNIFORMBLOCKBINDINGPROC) (GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
    typedef void (APIENTRYP PFNGLUNIFORMMATRIX4FVPROC) (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
    typedef void (APIENTRYP PFNGLUSEPROGRAMPROC) (GLuint program);
    typedef void (APIENTRYP PFNGLVALIDATEPROGRAMPROC) (GLuint program);
@@ -45,10 +52,13 @@ namespace Core{
                              
       PFNGLATTACHSHADERPROC glAttachShader;
       PFNGLBINDBUFFERPROC glBindBuffer;
+      PFNGLBINDBUFFERBASEPROC glBindBufferBase;
       PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
       PFNGLBUFFERDATAPROC glBufferData;
+      PFNGLBUFFERSUBDATAPROC glBufferSubData;
       PFNGLCLEARPROC glClear;
       PFNGLCLEARCOLORPROC glClearColor;
+      PFNGLCLEARDEPTHFPROC glClearDepthf;
       PFNGLCOMPILESHADERPROC glCompileShader;
       PFNGLCREATEPROGRAMPROC glCreateProgram;
       PFNGLCREATESHADERPROC glCreateShader;
@@ -62,6 +72,8 @@ namespace Core{
       PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
       PFNGLGETACTIVEATTRIBPROC glGetActiveAttrib;
       PFNGLGETACTIVEUNIFORMPROC glGetActiveUniform;
+      PFNGLGETACTIVEUNIFORMBLOCKIVPROC glGetActiveUniformBlockiv;
+      PFNGLGETACTIVEUNIFORMBLOCKNAMEPROC glGetActiveUniformBlockName;
       PFNGLGETATTACHEDSHADERSPROC glGetAttachedShaders;
       PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
       PFNGLGETPROGRAMIVPROC glGetProgramiv;
@@ -72,6 +84,7 @@ namespace Core{
       PFNGLLINKPROGRAMPROC glLinkProgram;
       PFNGLSHADERSOURCEPROC glShaderSource;
       PFNGLUNIFORM3FVPROC glUniform3fv;
+      PFNGLUNIFORMBLOCKBINDINGPROC glUniformBlockBinding;
       PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
       PFNGLUSEPROGRAMPROC glUseProgram;
       PFNGLVALIDATEPROGRAMPROC glValidateProgram;

@@ -2,26 +2,12 @@
 #include "Core_ECS/Components.h"
 #include "Core_ECS/SortedComponentPool.h"
 #include "Core_Graphics/Camera.h"
-#include "Core_Utils/Linear/Matrix.h"
-#include "Core_Utils/Linear/Vector.h"
 
 // Gonna render entities based on the IRendererView, and the associated 
 // Position/Color Components (or whatever other components go with 
 // the uniform data struct) and the Mesh/Material Components
 
 namespace Core{
-   // Standard default uniform block which can be expected by shaders
-   // TODO: Settle on a standard set of these vars that is stable to be used 
-   // as an api of sorts
-   struct UniformCameraData{
-      Linear::fmat4 MVP;
-      Linear::fvec3 color; // TODO: fvec4 ?
-   };
-
-   // TODO: ObjectUniformData is more of our camera data 
-   // Need to define also a set of vertex stuff like vertex position, UV texcoords and such
-
-   // TODO: Update to Color4 type when implemented
 
    struct tempComperand{
       bool operator==(const tempComperand& other) const;
@@ -71,9 +57,6 @@ namespace Core{
       private: 
          RenderDevice* m_device;
          AssetManager& m_assetManager;
-         struct UniformBuffers{
-            BufferHandle cameraData;
-         } m_uniformBuffers;
    };
    // Three types of shader vars: 
    // Default as above

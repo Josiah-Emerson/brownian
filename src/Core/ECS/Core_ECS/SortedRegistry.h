@@ -47,7 +47,10 @@ namespace Core{
    (Concepts::all_types_unique<Components...>) && \
    std::strict_weak_order<Compare, U, U>)
 
-   CLASS_TEMPLATE
+   // We do not use the normal class template macro here because the compiler first tries all the 
+   // requires clauses before specialization matching. This means when you pass a ComponentPack, it treats 
+   // the ComponentPack as a Component, and tries to run the Concpets on it such as is_instance_of_template_v<Components, Component>
+   template<typename U, typename Compare, typename... Components>
    class SortedRegistry;
    
    CLASS_TEMPLATE

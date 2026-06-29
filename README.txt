@@ -1,22 +1,12 @@
-Things to think about: 
-   1) With the new ComponentTag system do we want to have the Tags inherit from ComponentTag? 
-   2) Will probably need to think about refactoring so that all the components go in their own place, 
-   and then the Graphics specific ComponentPack is defined somewhere else? Just doesn't seem the best rn
+LAST BASIC GRAPHICS STEPS: 
+  - Update whatever those temp functions I had were 
+  - Add it so that the asset manager can actually load stuff (?) or something 
+  - Look into the different graphics formats
+  - Make it so GLCommandList really only interfaces with upadting buffers through GLRenderDevice. Or at 
+  least think about why it might do this
+  - Think about how best to define our standard set of uniform blocks. I think I like the union approach 
+  - Add support for custom uniform buffers on materials
 
-BIG (NOT FUN) TODO: Redo the graphics stuff so it is not so terrible
-   - We want the data to be sorted by graphics comperands for drawing, but what if we don't an entity 
-   to have a prog or a mdoel? Empty ShaderProgram and Model ?
-   - Need to refactor so that the layer defines its compoents 
-   - Road Map: 
-      A) Refactor GraphicsComponents.h into a Component.h file in Core_ECS which has things like the 
-      Component struct, component tags, and then definitions for PositionComponent, DirectionComponent, 
-      and so on. Perhaps keep the component pack, and then decide if we want the unpacking structs like 
-      create registry and what not. Have component pack ensure that the types past to it are Components ?
-      B) If not there add to SortedRegistry and ComponentPool a compile time check to ensure they are components, 
-      or have it only take a ComponentPack type ?
-      C) Make the Layer class define what components it wants
-      D) Make RenderDevice become templated so that we can pass a general Registry to it 
-      E) Make a way to add entities with a 'null' comperand (honestly could just be nullptr)
 
 NEXT STEP: Create a physics systems 
    - This tracks all the particles in its system, and is responsible for things like force repulsion. This system is responsible 

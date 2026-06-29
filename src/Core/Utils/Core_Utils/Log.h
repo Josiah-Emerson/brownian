@@ -72,6 +72,7 @@ namespace Core{
 #define FIG_LOG_MEDIUM_WARNING(msg) FIG_LOG_WARNING(msg, MEDIUM)
 #define FIG_LOG_HIGH_WARNING(msg) FIG_LOG_WARNING(msg, HIGH)
 #define FIG_ASSERT(condition, msg) static_cast<bool>(condition) ? void(0) : Core::Macros::figAssert(msg, FIG_FLF);
+#define FIG_UNCREACHABLE(msg)  FIG_ASSERT(false, msg)
 #define FIG_LOG_OUTPUT_LOG_INFO Core::Macros::outputStats();
 
 #else
@@ -84,5 +85,6 @@ namespace Core{
 #define FIG_LOG_MEDIUM_WARNING(msg)
 #define FIG_LOG_HIGH_WARNING(msg)
 #define FIG_ASSERT(msg)
+#define FIG_UNCREACHABLE(msg)
 #define FIG_LOG_OUTPUT_LOG_INFO 
 #endif

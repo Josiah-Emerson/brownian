@@ -23,8 +23,12 @@ namespace Core{
 
          template <typename TLayer, typename... Args>
          requires(std::is_base_of_v<Layer, TLayer>)
-         void pushLayer(Args... args){
-            m_layerStack.push_back( std::make_unique<TLayer>(args...) );
+         void pushLayer(Args&&... args){
+            m_layerStack.push_back(
+                  std::make_unique<TLayer>(
+                     std::forward<Args>(args)...
+                     )
+                  );
          }
 
          /*
@@ -46,6 +50,7 @@ namespace Core{
          std::shared_ptr<Window> getWindow() const { return m_window; }
 
          AssetManager& getAssetManager() { return *m_assetManager; }
+         RenderDevice* getRenderDevice() { return m_device.get(); }
 
          static Application& get();
          // static float getTime(); // TODO: do this later

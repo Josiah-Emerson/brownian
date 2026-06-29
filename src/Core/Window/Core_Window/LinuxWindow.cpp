@@ -98,7 +98,11 @@ namespace Core{
          // NOTE: Possible issue: ImGui uses this event but a layer higher up which doesn't care about imgui handles the event. In this case both the layer 
          // and imgui 'handle' or use this event which is probably not what we want
          // ImGui_ImplX11_ProcessEvent(&event);
-         FIG_LOG_HIGH_WARNING("UNCOMMENT ABOVE LINE FOR GUI")
+         static bool w { true };
+         if(w){
+            FIG_LOG_LOW_WARNING("UNCOMMENT ABOVE LINE FOR GUI")
+            w = false;
+         }
          std::vector<Events::Event> events = translateXEventToFigEvents(&event);
 
          for(Events::Event& e : events){

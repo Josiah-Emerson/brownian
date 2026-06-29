@@ -31,9 +31,40 @@ namespace Core{
       };
 
       BufferHandle vBuffer = m_device->createBuffer(vertexBufferDesc, vertices.data());
-      m_meshes.emplace_back(vBuffer);
+      m_meshes.emplace_back(vBuffer, vertices.size());
 
       return MeshHandle { m_meshes.size() - 1 };
+   }
+
+
+   struct ShaderProgramHandle { };
+   MaterialHandle AssetManager::createMaterial(ShaderProgramHandle shaderProgramHandle){
+      FIG_UNCREACHABLE("Not implemented yet")
+      return { };
+   }
+
+   // NOTE: This only takes the buffer handle so that we can glue to separate things together 
+   // for a proof of concept
+   MaterialHandle AssetManager::createMaterial(){
+      static bool w { true };
+      if(w){
+         FIG_LOG_MEDIUM_WARNING("Use of a temporary func")
+         w = false;
+      }
+
+      // IMPORTANT NOTE: Obviously we will need to separate shader creation from 
+      // material creation
+      ShaderPipelineDesc desc {
+         .vertex = "Resources/Shaders/Vertex.vs",
+         .fragment = "Resources/Shaders/Fragment.fs",
+         .vLayout = VertexData::getVertexLayout(),
+         .uLayout = { }, // TODO: use this for custom uniform values?
+      };
+
+      ShaderPipelineHandle h = m_device->createShaderPipeline(desc);
+      m_materials.emplace_back(h);
+
+      return MaterialHandle {m_materials.size() - 1};
    }
 
    const Mesh& AssetManager::getMesh(MeshHandle handle) const{
@@ -43,6 +74,15 @@ namespace Core{
       // or a map for mapping handles to indices. As an exercies, calculate which one would likely be more 
       // space and time efficient
       return m_meshes[handle.idx];
+   }
+
+   const Material& AssetManager::getMaterial(MaterialHandle handle) const {
+      FIG_ASSERT(handle.idx < m_meshes.size() , "handle references a material with an index outside the bounds of m_materials")
+
+      // TODO: either implement the generation counter like we talked about, and a dead/live marker 
+      // or a map for mapping handles to indices. As an exercies, calculate which one would likely be more 
+      // space and time efficient
+      return m_materials[handle.idx];
    }
 
    std::vector<float> tmpGetVertices(){

@@ -2,10 +2,11 @@
 #include "Core_Utils/Log.h"
 
 namespace Core{
-   Mesh::Mesh(BufferHandle vertexBuffer)
+   Mesh::Mesh(BufferHandle vertexBuffer, std::size_t vertexCount)
       : m_vertexBuffer(vertexBuffer)
+      , m_vertexCount(vertexCount)
+      , m_indexCount(vertexCount) // TODO: For now we have no EBO, so just do this 
    {
-      FIG_LOG_MESSAGE("Mesh created")
    }
 
    void Mesh::outputLog() const{

@@ -31,6 +31,8 @@ namespace Core{
          MeshHandle createMesh(const char* path);
 
          MaterialHandle createMaterial(ShaderProgramHandle shaderProgramHandle);
+         // TMP VOID 
+         MaterialHandle createMaterial();
 
          const Mesh& getMesh(MeshHandle meshHandle) const;
          const Material& getMaterial(MaterialHandle materialHandle) const;

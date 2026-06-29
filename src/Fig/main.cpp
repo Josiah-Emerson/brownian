@@ -12,7 +12,9 @@ int main(){
 
    Core::Application app { appSpec };
    app.pushLayer<OverlayLayer>();
-   app.pushLayer<NewGraphicsTestLayer>(app.getAssetManager());
+   // FOR SOME REASON, THE PUSHLAYER CALLS AN ASSETMANAGER DESTRUCTOR 
+   // WHICH INVLAIDATES EVERYTHING
+   app.pushLayer<NewGraphicsTestLayer>(app.getRenderDevice(), app.getAssetManager());
    // app.pushLayer<GuiTestLayer>();
    // app.pushLayer<CameraRotateLayer>();
    app.run();

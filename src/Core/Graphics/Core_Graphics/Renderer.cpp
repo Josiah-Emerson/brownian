@@ -8,19 +8,29 @@
 
 namespace Core{
 
+   bool tempComperand::operator==(const tempComperand& other) const{
+      static bool w { true };
+      if(w){
+         FIG_LOG_HIGH_WARNING("Use of temp function");
+         w = false;
+      }
+      return true;
+   }
+
+   bool tempCompare::operator()(const tempComperand& lhs, const tempComperand& rhs) const {
+      static bool w { true };
+      if(w){
+         FIG_LOG_HIGH_WARNING("Use of temp function");
+         w = false;
+      }
+      return lhs == rhs;
+   }
+
    Renderer::Renderer(RenderDevice* device, AssetManager& assetManager)
       : m_device(device)
       , m_assetManager { assetManager }
    { 
-      FIG_ASSERT(m_device, "nullptr to render device")
-
-      BufferDesc cameraDataDesc {
-         .size = sizeof(UniformCameraData),
-         .bUsage = BufferUsage::UNIFORM_BUFFER,
-         .mUsage = MemoryUsage::CPU_TO_GPU
-      };
-
-      m_uniformBuffers.cameraData = m_device->createBuffer(cameraDataDesc);
+      FIG_ASSERT(m_device, "nullptr to render device");
    }
 
    void Renderer::RenderEntities(IRendererSortedRegistryView* view, Camera& camera){
@@ -29,10 +39,11 @@ namespace Core{
       auto& materials = view->materialPool();
       std::size_t entityCount = positions.size();
 
-      Linear::fmat4 M { 0 };
+      Linear::fmat4 M {};
       Linear::fmat4 V = camera.viewMatrix();
       Linear::fmat4 P = camera.projectionMatrix();
-      Linear::fmat4 MVP { 0 };
+      Linear::fmat4 MVP {};
+      Linear::fmat4 MVP_T {};
 
       RenderPassDesc pass { };
 
@@ -47,22 +58,25 @@ namespace Core{
 
          M = Linear::modelMatrix(position.val, Linear::fvec3{0, 0, 0}, Linear::fvec3{1, 1, 1});
          MVP = P * V * M;
+         MVP_T = MVP.transpose();
          UniformCameraData data { 
-            .MVP = MVP,
-            .color = Linear::fvec3 {1.f, 1.f, 1.f}
+            .MVP = MVP_T,
+            .color = Linear::fvec3 {0.f, .75f, .45f}
          };
+         static bool t { true };
 
          const Material& material = m_assetManager.getMaterial(h_material);
          const Mesh& mesh = m_assetManager.getMesh(h_mesh);
 
-         cmd->bindVertexBuffer(mesh.vertexBuffer());
          cmd->bindShaderPipeline(material.shaderPipelineHandle);
-         cmd->setUniformBuffer(m_uniformBuffers.cameraData, &data);
+         cmd->bindVertexBuffer(mesh.vertexBuffer());
+         cmd->setUniformBufferData(StandardUniformBlock::CAMERA_DATA, &data);
 
-         cmd->drawElement();
+         cmd->drawElement(mesh.indexCount());
       }
 
       cmd->endRenderPass();
       m_device->submitCommandList(cmd);
    }
+
 } // namespace Core
