@@ -2,8 +2,7 @@ LAST BASIC GRAPHICS STEPS:
   - Update whatever those temp functions I had were 
   - Add it so that the asset manager can actually load stuff (?) or something 
   - Look into the different graphics formats
-  - Make it so GLCommandList really only interfaces with upadting buffers through GLRenderDevice. Or at 
-  least think about why it might do this
+  - Better way to track buffer handles. What happens if we delete a buffer?
   - Think about how best to define our standard set of uniform blocks. I think I like the union approach 
   - Add support for custom uniform buffers on materials
 

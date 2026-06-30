@@ -50,7 +50,9 @@ namespace Core{
          // GL Specific
          const GLShaderPipeline& getShaderPipeline(ShaderPipelineHandle) const;
          const GLBuffer& getBuffer(BufferHandle) const;
+         GLBuffer& getBuffer(BufferHandle);
          const GLBuffer& getBuffer(StandardUniformBlock block) const;
+         GLBuffer& getBuffer(StandardUniformBlock block);
          GLuint getVAO(ShaderPipelineHandle pipelineHandle, BufferHandle bufferHandle);
 
       private: 

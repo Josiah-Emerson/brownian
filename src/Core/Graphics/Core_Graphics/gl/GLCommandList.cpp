@@ -66,9 +66,11 @@ namespace Core{
    }
 
    void GLCommandList::setUniformBufferData(StandardUniformBlock block, void* data){
-      const GLBuffer& buf = m_glDevice.getBuffer(block);
+      GLBuffer& buf = m_glDevice.getBuffer(block);
       m_openGL.glBindBuffer(GL_UNIFORM_BUFFER, buf.id);
       m_openGL.glBufferSubData(GL_UNIFORM_BUFFER, 0, buf.size, data);
+      buf.targetType = GLBufferTargetType::UNIFORM_BUFFER;
+      buf.hasData = true;
    }
 
    void GLCommandList::setUniformBufferData(BufferHandle handle, void* data){
@@ -97,8 +99,8 @@ namespace Core{
          FIG_LOG_HIGH_WARNING("Need to figure out a way to not use the magic 0 constant")
          w = false;
       }
-
    }
+
    void GLCommandList::drawElement(std::size_t indexCount){
       // m_openGL.glDrawArrays(GL_TRIANGLES, 0, indexCount);
       m_openGL.glDrawArrays(GL_LINE_LOOP, 0, indexCount);

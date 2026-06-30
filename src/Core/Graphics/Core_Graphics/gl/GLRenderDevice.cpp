@@ -125,9 +125,19 @@ namespace Core{
       return m_shaderPipelines[handle.idx];
    }
 
+   GLBuffer& GLRenderDevice::getBuffer(BufferHandle handle) {
+      // TODO: validation
+      return m_buffers[handle.idx];
+   }
+
    const GLBuffer& GLRenderDevice::getBuffer(BufferHandle handle) const {
       // TODO: validation
       return m_buffers[handle.idx];
+   }
+
+   GLBuffer& GLRenderDevice::getBuffer(StandardUniformBlock block){
+      FIG_ASSERT(StandardUniformBlock::NUM != block, "Invalid uniform block")
+      return getBuffer(m_stdUniformBufferHandles[static_cast<std::size_t>(block)]);
    }
 
    const GLBuffer& GLRenderDevice::getBuffer(StandardUniformBlock block) const{
