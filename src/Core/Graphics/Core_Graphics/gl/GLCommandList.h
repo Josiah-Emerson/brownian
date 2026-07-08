@@ -18,6 +18,7 @@ namespace Core{
          void endRenderPass() override;
          void bindShaderPipeline(ShaderPipelineHandle pipelineHandle) override;
          void bindVertexBuffer(BufferHandle vBufferHandle) override;
+         void bindIndexBuffer(BufferHandle idxBufHandle) override;
          void setUniformBufferData(BufferHandle uBufferHandle, void* data) override;
          void setUniformBufferData(StandardUniformBlock block, void* data) override;
          void drawElement(std::size_t indexCount) override;

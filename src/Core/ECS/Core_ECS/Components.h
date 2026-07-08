@@ -1,5 +1,5 @@
 #pragma once
-#include "Core_Graphics/AssetManager.h"
+#include "Core_AssetManager/AssetManager.h"
 #include "Core_Utils/Concepts.h"
 #include "Core_Utils/Linear/Vector.h"
 #include "Core_Utils/Types.h"
@@ -18,6 +18,8 @@ namespace Core{
       // pointers 
       operator T*() { return &val; }
       operator const T*() const { return &val; }
+
+      bool operator==(const Component<T, Tag>& other) const { return this->val == other.val;};
    };
 
    struct PositionTag {};

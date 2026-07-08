@@ -8,6 +8,7 @@ namespace Core{
    // TODO: Expand this at some point, but for now just fragment and vertex sources
    enum class ShaderDataType{
       F_VEC3,
+      F_VEC4,
       F_MAT4,
    };
 

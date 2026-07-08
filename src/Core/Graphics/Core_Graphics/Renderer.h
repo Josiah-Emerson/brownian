@@ -53,7 +53,7 @@ namespace Core{
       public:
          Renderer(RenderDevice* device, AssetManager& assetManager);
 
-         void RenderEntities(IRendererSortedRegistryView* view, Camera& camera);
+         void renderEntities(IRendererSortedRegistryView* view, Camera& camera);
       private: 
          RenderDevice* m_device;
          AssetManager& m_assetManager;

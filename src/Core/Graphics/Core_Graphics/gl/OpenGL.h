@@ -22,6 +22,7 @@ namespace Core{
    typedef void (APIENTRYP PFNGLDELETESHADERPROC) (GLuint shader);
    typedef void (APIENTRYP PFNGLDEPTHFUNCPROC) (GLenum func);
    typedef void (APIENTRYP PFNGLDRAWARRAYSPROC) (GLenum mode, GLint first, GLsizei count);
+   typedef void (APIENTRYP PFNGLDRAWELEMENTSPROC) (GLenum mode, GLsizei count, GLenum type, const void * indices);
    typedef void (APIENTRYP PFNGLENABLEPROC) (GLenum cap);
    typedef void (APIENTRYP PFNGLENABLEVERTEXATTRIBARRAYPROC) (GLuint index);
    typedef void (APIENTRYP PFNGLGENBUFFERSPROC) (GLsizei n, GLuint *buffers);
@@ -66,6 +67,7 @@ namespace Core{
       PFNGLDELETEPROGRAMPROC glDeleteProgram;
       PFNGLDELETESHADERPROC  glDeleteShader;
       PFNGLDRAWARRAYSPROC glDrawArrays;
+      PFNGLDRAWELEMENTSPROC glDrawElements;
       PFNGLENABLEPROC glEnable;
       PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
       PFNGLGENBUFFERSPROC glGenBuffers;

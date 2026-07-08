@@ -1,17 +1,14 @@
 #pragma once
-#include "Layer.h"
 #include "Core_ECS/Components.h"
 #include "Core_ECS/SortedRegistry.h"
-#include "Core_Graphics/Renderer.h"
+#include "Core_AssetManager/AssetManager.h"
 #include "Core_Graphics/Camera.h"
-
-namespace Core{
-   struct RenderDevice;
-   struct AssetManager;
-}
+#include "Core_Graphics/RenderDevice.h"
+#include "Core_Graphics/Renderer.h"
+#include "Layer.h"
 
 class NewGraphicsTestLayer : public Core::Layer{
-   public:
+   public: 
       NewGraphicsTestLayer(Core::RenderDevice* device, Core::AssetManager& assetManager);
       ~NewGraphicsTestLayer();
 
@@ -27,8 +24,7 @@ class NewGraphicsTestLayer : public Core::Layer{
       Core::AssetManager& m_assetManager;
       Core::Renderer m_renderer;
       Core::Camera m_camera;
-      Core::MeshHandle m_mesh1;
-      Core::MeshHandle m_mesh2;
+      Core::MeshHandle m_mesh;
       Core::MaterialHandle m_material;
       Registry m_registry;
 };

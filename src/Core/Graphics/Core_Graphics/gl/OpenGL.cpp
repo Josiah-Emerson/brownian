@@ -27,6 +27,7 @@ namespace Core{
       FETCH_GL_FUNC(PFNGLDELETEPROGRAMPROC, glDeleteProgram);
       FETCH_GL_FUNC(PFNGLDELETESHADERPROC,  glDeleteShader);
       FETCH_GL_FUNC(PFNGLDRAWARRAYSPROC, glDrawArrays);
+      FETCH_GL_FUNC(PFNGLDRAWELEMENTSPROC, glDrawElements);
       FETCH_GL_FUNC(PFNGLENABLEPROC, glEnable);
       FETCH_GL_FUNC(PFNGLENABLEVERTEXATTRIBARRAYPROC, glEnableVertexAttribArray);
       FETCH_GL_FUNC(PFNGLGENBUFFERSPROC, glGenBuffers);
@@ -55,6 +56,7 @@ namespace Core{
       // These two ensure that vertexes are drawn via depth, and thus weird things like incorrect ordering of verticies happen
       glEnable(GL_DEPTH_TEST);
       glDepthFunc(GL_LESS);
+      glEnable(GL_CULL_FACE);
    }
 
    bool OpenGL::operator==(const OpenGL& other) const{

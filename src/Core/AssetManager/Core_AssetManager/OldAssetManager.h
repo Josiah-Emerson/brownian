@@ -9,6 +9,7 @@
 namespace Core{
    // TODO: Perhaps want to update all handles so that they the first 32 bits be the idx 
    // and the second 32 bits be the generation number like we talked about with gemski
+   class Mesh;
    struct MeshHandle{
       std::size_t idx;
    };
@@ -29,6 +30,8 @@ namespace Core{
          // to a path thats already been parsed and allocated ?
          MeshHandle createMesh(const std::string& path);
          MeshHandle createMesh(const char* path);
+         MeshHandle loadMesh(const std::string& path);
+         MeshHandle loadMesh(const char* path);
 
          MaterialHandle createMaterial(ShaderProgramHandle shaderProgramHandle);
          // TMP VOID 
@@ -40,6 +43,7 @@ namespace Core{
       private: 
          RenderDevice* m_device;
          std::vector<Mesh> m_meshes;
+         std::unordered_map<std::string, MeshHandle> m_meshCache; // path to mesh handle cache
          std::vector<Material> m_materials;
    };
 } // namespace Core

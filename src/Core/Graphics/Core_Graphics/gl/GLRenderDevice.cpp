@@ -1,4 +1,5 @@
 #include "GLRenderDevice.h"
+#include "Core_Graphics/ShaderPipeline.h"
 #include "Core_Graphics/gl/GLCommandList.h"
 #include "Core_Utils/Log.h"
 #include <GL/gl.h>
@@ -6,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 namespace Core{
    GLRenderDevice::GLRenderDevice(Window& window)
@@ -37,6 +39,8 @@ namespace Core{
          targetType = GLBufferTargetType::VERTEX_BUFFER;
       }else if(desc.bUsage & BufferUsage::UNIFORM_BUFFER){
          targetType = GLBufferTargetType::UNIFORM_BUFFER;
+      }else if(desc.bUsage & BufferUsage::INDEX_BUFFER){
+         targetType = GLBufferTargetType::INDEX_BUFFER;
       }
 
       FIG_ASSERT(targetType != GLBufferTargetType::NONE, "GLBufferTargetType not deduced");
@@ -169,6 +173,10 @@ namespace Core{
          switch(vAttr.dataType){
             case(ShaderDataType::F_VEC3):
                numComponents = 3;
+               type = GL_FLOAT;
+               break;
+            case(ShaderDataType::F_VEC4):
+               numComponents = 4;
                type = GL_FLOAT;
                break;
             case(ShaderDataType::F_MAT4):

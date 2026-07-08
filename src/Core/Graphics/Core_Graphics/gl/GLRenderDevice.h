@@ -22,6 +22,7 @@ namespace Core{
       NONE,
       VERTEX_BUFFER = GL_ARRAY_BUFFER,
       UNIFORM_BUFFER = GL_UNIFORM_BUFFER,
+      INDEX_BUFFER = GL_ELEMENT_ARRAY_BUFFER,
    };
 
    enum class GLMemoryUseHint{

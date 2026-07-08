@@ -14,7 +14,7 @@ out vec3 fragmentColor;
 void main(){
    gl_Position = camera.MVP * vec4(vertexPosition_modelSpace, 1);
    // gl_Position = MVP * vec4(vertexPosition_modelSpace, 1);
-   fragmentColor = vec3(.2, 0, 1.f);
+   // fragmentColor = vec3(.2, 0, 1.f);
    // fragmentColor = vertexPosition_modelSpace;
-   // fragmentColor = camera.color;
+   fragmentColor = camera.color;
 }

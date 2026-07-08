@@ -1,7 +1,11 @@
 #pragma once
-#include "RenderPass.h"
 #include "Renderer.h"
+#include "RenderPass.h"
 #include "Core_Graphics/CommandList.h"
+#include "Core_Graphics/RenderDevice.h"
+#include "Core_Graphics/ShaderPipeline.h"
+#include "Core_Graphics/Mesh.h"
+#include "Core_Graphics/Material.h"
 #include "Core_Utils/Linear/Matrix.h"
 #include "Core_Utils/Linear/MatrixTransform.h"
 #include "Core_Utils/Log.h"
@@ -33,7 +37,7 @@ namespace Core{
       FIG_ASSERT(m_device, "nullptr to render device");
    }
 
-   void Renderer::RenderEntities(IRendererSortedRegistryView* view, Camera& camera){
+   void Renderer::renderEntities(IRendererSortedRegistryView* view, Camera& camera){
       auto& positions = view->positionPool();
       auto& meshes = view->meshPool();
       auto& materials = view->materialPool();
@@ -56,12 +60,12 @@ namespace Core{
          MeshHandle h_mesh = meshes[i];
          MaterialHandle h_material = materials[i];
 
-         M = Linear::modelMatrix(position.val, Linear::fvec3{0, 0, 0}, Linear::fvec3{1, 1, 1});
+         M = Linear::modelMatrix(position.val, Linear::fvec3{1, 1, 1}, Linear::fvec3{1, 1, 1});
          MVP = P * V * M;
          MVP_T = MVP.transpose();
          UniformCameraData data { 
             .MVP = MVP_T,
-            .color = Linear::fvec3 {0.f, .75f, .45f}
+            .color = Linear::fvec3 {1.f, 1.f, 1.f}
          };
          static bool t { true };
 
@@ -69,10 +73,11 @@ namespace Core{
          const Mesh& mesh = m_assetManager.getMesh(h_mesh);
 
          cmd->bindShaderPipeline(material.shaderPipelineHandle);
-         cmd->bindVertexBuffer(mesh.vertexBuffer());
+         cmd->bindVertexBuffer(mesh.vBuf);
+         cmd->bindIndexBuffer(mesh.eBuf);
          cmd->setUniformBufferData(StandardUniformBlock::CAMERA_DATA, &data);
 
-         cmd->drawElement(mesh.indexCount());
+         cmd->drawElement(mesh.elementCnt);
       }
 
       cmd->endRenderPass();

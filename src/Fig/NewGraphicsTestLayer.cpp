@@ -9,10 +9,11 @@ NewGraphicsTestLayer::NewGraphicsTestLayer(Core::RenderDevice* device, Core::Ass
             static_cast<float>(m_window->getHeight()),
             {0,0,0}}
 {
-   m_mesh = m_assetManager.createMesh("Path/To/Mesh");
-   m_material = m_assetManager.createMaterial();
-   m_registry.registerNewEntity( Core::tempComperand{ }, Core::PositionComponent{{0, 0, 0}}, 
-         Core::MeshComponent{m_mesh}, Core::MaterialComponent{m_material});
+   m_mesh1 = m_assetManager.loadMesh("Resources/Meshes/teddy.obj");
+   m_mesh2 = m_assetManager.loadMesh("Resources/Meshes/cat/cat.obj");
+   m_material = m_assetManager.loadMaterial("");
+   m_registry.registerNewEntity( Core::tempComperand{}, Core::PositionComponent{{0, 0, 0}},
+         Core::MeshComponent{m_mesh1}, Core::MaterialComponent{m_material});
 }
 
 NewGraphicsTestLayer::~NewGraphicsTestLayer(){
@@ -20,14 +21,27 @@ NewGraphicsTestLayer::~NewGraphicsTestLayer(){
 
 void NewGraphicsTestLayer::onUpdate(float dt){
    Core::RendererSortedRegistryView view (m_registry);
-   m_renderer.RenderEntities(&view, m_camera);
+   m_renderer.renderEntities(&view, m_camera);
 }
 
 bool NewGraphicsTestLayer::onEvent(Core::Events::Event& event){
    if(event.type == Core::Events::Type::KEY_PRESS){
-      m_camera.pos()[0] += 0.1f;
-      m_camera.pos()[1] += 0.1f;
-      m_camera.pos()[2] += 0.1f;
+      if(event.keyEvent.key == Core::Events::Key::SPACE){
+         const auto& pool = m_registry.getPool<Core::MeshComponent>();
+         if(pool.id(0) == Core::MeshComponent{m_mesh1}){
+            m_registry.updateComponent(0, Core::MeshComponent{m_mesh2});
+         }else{
+            m_registry.updateComponent(0, Core::MeshComponent{m_mesh1});
+         }
+
+         return true;
+      }
+
+      m_camera.pos()[0] -= 0.5f;
+      m_camera.pos()[1] -= 0.5f;
+      m_camera.pos()[2] += 1;
+
+      return true;
    }
    return false;
 }

@@ -15,6 +15,13 @@ namespace Core{
       }
    };
 
+   struct Mesh{
+      BufferHandle vBuf;
+      BufferHandle eBuf;
+      std::size_t vertexCnt;
+      std::size_t elementCnt;
+   };
+   /*
    class Mesh{
       public:
          Mesh(BufferHandle vertexBuffer, std::size_t vertexCount);
@@ -26,7 +33,9 @@ namespace Core{
 
       private: 
          BufferHandle m_vertexBuffer;
+         BufferHandle m_elementBuffer;
          std::size_t m_vertexCount;
          std::size_t m_indexCount;
    };
+   */
 } // namespace Core

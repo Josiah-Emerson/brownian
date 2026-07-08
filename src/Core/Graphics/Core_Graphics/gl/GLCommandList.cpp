@@ -65,6 +65,16 @@ namespace Core{
       m_openGL.glBindVertexArray(vao);
    }
 
+   void GLCommandList::bindIndexBuffer(BufferHandle idxBufHandle){
+      // TODO: Wiki says that GL_ELEMENT_ARRAY_BUFFER is only a valid target if a VAO 
+      // has been bound. Add something which checks that and can provide a log or info 
+      // about that
+      GLBuffer& buf = m_glDevice.getBuffer(idxBufHandle);
+      FIG_ASSERT(buf.targetType == GLBufferTargetType::INDEX_BUFFER, "Trying to bind a buffer whose target is not an element buffer")
+
+      m_openGL.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf.id);
+   }
+
    void GLCommandList::setUniformBufferData(StandardUniformBlock block, void* data){
       GLBuffer& buf = m_glDevice.getBuffer(block);
       m_openGL.glBindBuffer(GL_UNIFORM_BUFFER, buf.id);
@@ -102,8 +112,10 @@ namespace Core{
    }
 
    void GLCommandList::drawElement(std::size_t indexCount){
-      // m_openGL.glDrawArrays(GL_TRIANGLES, 0, indexCount);
-      m_openGL.glDrawArrays(GL_LINE_LOOP, 0, indexCount);
+      // TODO: GL_UNSIGNED_SHORT is what we use, and good for any mesh with less than 2^16 vertices 
+      // Will we ever need to support more? If so we will need to A) ensure that we update how these 
+      // values are stored in our MeshLoader (or other areas) and know how to update here its type
+      m_openGL.glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, (void*)0);
    }
 
 } // namespace Core

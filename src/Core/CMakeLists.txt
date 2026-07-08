@@ -7,6 +7,7 @@ target_sources(${target} PRIVATE
    Layer.cpp
 )
 
+add_subdirectory(AssetManager)
 add_subdirectory(ECS)
 add_subdirectory(Graphics)
 # add_subdirectory(Physics)

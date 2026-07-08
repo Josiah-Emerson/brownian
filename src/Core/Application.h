@@ -2,7 +2,7 @@
 #include <string>
 #include "Layer.h"
 #include "Core_Window/Window.h"
-#include "Core_Graphics/AssetManager.h"
+#include "Core_AssetManager/AssetManager.h"
 #include "Core_Graphics/RenderDevice.h"
 #include "Events.h"
 
