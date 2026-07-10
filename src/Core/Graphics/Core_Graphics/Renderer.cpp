@@ -1,5 +1,6 @@
 #pragma once
 #include "Renderer.h"
+#include "Core_ECS/Components.h"
 #include "RenderPass.h"
 #include "Core_Graphics/CommandList.h"
 #include "Core_Graphics/RenderDevice.h"
@@ -41,6 +42,7 @@ namespace Core{
       auto& positions = view->positionPool();
       auto& meshes = view->meshPool();
       auto& materials = view->materialPool();
+      auto& colors = view->colorPool();
       std::size_t entityCount = positions.size();
 
       Linear::fmat4 M {};
@@ -63,11 +65,25 @@ namespace Core{
          M = Linear::modelMatrix(position.val, Linear::fvec3{1, 1, 1}, Linear::fvec3{1, 1, 1});
          MVP = P * V * M;
          MVP_T = MVP.transpose();
+         static bool w { true };
+         if(w){
+            // TODO: Remove the color component on the 3 (?) view things in Renderer.h, 
+            // get color out of the uniform camera data, 
+            // and remove Color3Component from registry
+            FIG_LOG_HIGH_WARNING("The view is updated to have a color pool component, when this is only something we are using temporarily")
+            w = false;
+         }
+         const Color3Component& col = colors[i];
+         Linear::fvec3 color = {
+            col.val.R / 255.f,
+            col.val.G / 255.f,
+            col.val.B / 255.f,
+         };
+
          UniformCameraData data { 
             .MVP = MVP_T,
-            .color = Linear::fvec3 {1.f, 1.f, 1.f}
+            .color = color,
          };
-         static bool t { true };
 
          const Material& material = m_assetManager.getMaterial(h_material);
          const Mesh& mesh = m_assetManager.getMesh(h_mesh);

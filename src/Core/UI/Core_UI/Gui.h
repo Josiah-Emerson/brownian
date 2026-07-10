@@ -46,8 +46,10 @@ namespace Core{
                bool button(const char* label, bool sameLine = false); // TODO: set size? I think ImGui Auto sets to size of label if size is not specified
                
                /*
-                * Assumes color is between 0 and 1
-                */
+                * TODO: Figure out the color stuff behind the scenes (i.e. rn we have our Color3 component 
+                * as a uint8 0-255, but most things expect color as a float between 0 and 1)
+                * I think this expects 0-255, converts to 0-1, presents slider, returns between 0-255
+                */ 
                bool rgbSelector(const char* label, Linear::fvec3& color, bool sameLine = false);
                bool rgbSelector(const char* label, Color3& color, bool sameLine = false);
 

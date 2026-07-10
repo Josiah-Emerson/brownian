@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "FMATReader.h"
 #include "Core_Graphics/Mesh.h"
 #include "Core_Graphics/Material.h"
 
@@ -33,6 +34,19 @@ namespace Core{
          const Material& getMaterial(MaterialHandle hMaterial);
 
       private: 
+         struct ShaderPipelineKey{
+            std::string vertexPath;
+            std::string fragmentPath;
+
+            bool operator==(const ShaderPipelineKey& other) const;
+         };
+
+         struct ShaderPipelineKeyHash{
+            std::size_t operator()(const ShaderPipelineKey& key) const noexcept;
+         };
+
+         ShaderPipelineHandle getOrCreateShaderPipeline(const FMATReader::FMATObject& fmatObject);
+
          RenderDevice* m_device;
 
          // Asset Storage
@@ -42,5 +56,6 @@ namespace Core{
          // Asset cache
          std::unordered_map<std::filesystem::path, MeshHandle> m_meshCache;
          std::unordered_map<std::filesystem::path, MaterialHandle> m_materialCache;
+         std::unordered_map<ShaderPipelineKey, ShaderPipelineHandle, ShaderPipelineKeyHash> m_shaderPipelineCache;
    };
 } // namespace Core

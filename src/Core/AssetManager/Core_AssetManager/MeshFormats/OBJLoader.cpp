@@ -76,7 +76,7 @@ namespace Core{
          // TODO/NOTE: Look into triangulation algorithms for arbitrary polygons if necessary. Chat told me 
          // that most exporters will triangulate the faces regardless, however the obj format does not require this
          if(faces.size() > 3 && w){
-            FIG_LOG_LOW_WARNING("The OBJLoader translates faces to polygons assuming they are convex, and uses triangle fanning. At least 1 face has been encountered which has more than 3 vertices, and thus could possibly concave. The loader will treat it as though it is convex, but cannot guarantee the model will look correct.")
+            FIG_LOG_LOW_WARNING("The OBJLoader translates faces to polygons assuming they are convex, and uses triangle fanning. At least 1 face has been encountered which has more than 3 vertices, and thus could possibly be concave. The loader will treat it as though it is convex, but cannot guarantee the model will look correct.")
             w = false;
          }
          // 0, 1, 2, 3, 4

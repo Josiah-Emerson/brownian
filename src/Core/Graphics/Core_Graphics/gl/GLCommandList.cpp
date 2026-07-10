@@ -115,7 +115,7 @@ namespace Core{
       // TODO: GL_UNSIGNED_SHORT is what we use, and good for any mesh with less than 2^16 vertices 
       // Will we ever need to support more? If so we will need to A) ensure that we update how these 
       // values are stored in our MeshLoader (or other areas) and know how to update here its type
-      m_openGL.glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, (void*)0);
+      m_openGL.glDrawElements(GL_LINES, indexCount, GL_UNSIGNED_SHORT, (void*)0);
    }
 
 } // namespace Core

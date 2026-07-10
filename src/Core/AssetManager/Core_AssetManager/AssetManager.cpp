@@ -37,23 +37,22 @@ namespace Core{
    }
 
    MaterialHandle AssetManager::loadMaterial(const char* path){
-      static bool w { true };
-      if(w){
-         FIG_LOG_MEDIUM_WARNING("Need to update this function to actually load materials once proof of concept works")
-         w = false;
+      std::filesystem::path p { path };
+      auto it = m_materialCache.find(p);
+      if(it != m_materialCache.end()){
+         return it->second;
       }
 
-      // IMPORTANT NOTE: Obviously we will need to separate shader creation from 
-      // material creation
-      ShaderPipelineDesc desc {
-         .vertex = "Resources/Shaders/Vertex.vs",
-         .fragment = "Resources/Shaders/Fragment.fs",
-         .vLayout = VertexData::getVertexLayout(),
-         .uLayout = { }, // TODO: use this for custom uniform values?
+      FMATReader fmatReader {};
+      FMATReader::FMATObject tmpFmat = fmatReader.read(p);
+      std::filesystem::path pathPrepend { "./Resources/Shaders/" };
+      FMATReader::FMATObject fmat = {
+         .vsPath = pathPrepend / tmpFmat.vsPath,
+         .fsPath = pathPrepend / tmpFmat.fsPath,
       };
+      ShaderPipelineHandle hShaderPipeline = getOrCreateShaderPipeline(fmat);
 
-      ShaderPipelineHandle h = m_device->createShaderPipeline(desc);
-      m_materials.emplace_back(h);
+      m_materials.emplace_back(hShaderPipeline);
       return MaterialHandle { m_materials.size() - 1 };
    }
 
@@ -65,5 +64,43 @@ namespace Core{
    const Material& AssetManager::getMaterial(MaterialHandle hMaterial){
       // TODO: Bounds check
       return m_materials[hMaterial.idx];
+   }
+
+   bool AssetManager::ShaderPipelineKey::operator==(const ShaderPipelineKey& other) const{
+      return fragmentPath == other.fragmentPath && 
+         vertexPath == other.vertexPath;
+   }
+
+   std::size_t AssetManager::ShaderPipelineKeyHash::operator()(const ShaderPipelineKey& key) const noexcept{
+      std::size_t h1 = std::hash<std::string>{}(key.vertexPath);
+      std::size_t h2 = std::hash<std::string>{}(key.fragmentPath);
+      return h1 ^ (h2 << 1);
+   }
+
+   ShaderPipelineHandle AssetManager::getOrCreateShaderPipeline(const FMATReader::FMATObject& fmatObject){
+      ShaderPipelineKey key{
+         .vertexPath = fmatObject.vsPath,
+         .fragmentPath = fmatObject.fsPath,
+      };
+
+      auto it = m_shaderPipelineCache.find(key);
+      if(it != m_shaderPipelineCache.end()){
+         return it->second;
+      }
+
+      // TODO: Separate shader pipeline creation from shader creation
+      // Or should the RenderDevice itself which is in charge of caching/separating out 
+      // the vertex and fragment shaders?
+      ShaderPipelineDesc desc {
+         .vertex = fmatObject.vsPath,
+         .fragment = fmatObject.fsPath,
+         .vLayout = VertexData::getVertexLayout(),
+         .uLayout = { }, // TODO: Use this for custom uniform values ?
+      };
+
+      ShaderPipelineHandle hShaderPipeline = m_device->createShaderPipeline(desc);
+      m_shaderPipelineCache[key] = hShaderPipeline;
+
+      return hShaderPipeline;
    }
 } // namespace Core

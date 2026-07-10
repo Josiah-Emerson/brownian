@@ -1,4 +1,5 @@
 #pragma once
+#include "Core_UI/Gui.h"
 #include "Layer.h"
 #include "Core_ECS/Components.h"
 #include "Core_ECS/SortedRegistry.h"
@@ -16,14 +17,19 @@ class NewGraphicsTestLayer : public Core::Layer{
       ~NewGraphicsTestLayer();
 
       void onUpdate(float dt) override;
+      void onRender() override;
       bool onEvent(Core::Events::Event& event) override;
+
+      void renderUI();
 
    private: 
       using Components = Core::ComponentPack<Core::PositionComponent,
+                                           Core::Color3Component,
                                            Core::MeshComponent,
                                            Core::MaterialComponent>;
       using Registry = Core::SortedRegistry<Core::tempComperand, Core::tempCompare, Components>;
 
+      Core::Gui m_gui;
       Core::AssetManager& m_assetManager;
       Core::Renderer m_renderer;
       Core::Camera m_camera;

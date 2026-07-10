@@ -8,6 +8,7 @@ add_library("Core::${dir}" ALIAS ${target})
 # SOURCES
 target_sources(${target} PRIVATE
    ${target}/AssetManager.cpp
+   ${target}/FMATReader.cpp
    ${target}/MeshLoader.cpp
    ${target}/MeshFormats/OBJLoader.cpp
    ${target}/MeshFormats/OBJParser.cpp

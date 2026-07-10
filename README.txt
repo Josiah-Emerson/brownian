@@ -1,7 +1,9 @@
-TODO: Issues with loading the .obj files
+GRAPHICS TODOs:
+  - Error handling in general (i.e. parsing/loading of .obj or .fmat files, buffer creation, etc...)
+  - 
+
 LAST BASIC GRAPHICS STEPS: 
   - Update whatever those temp functions I had were 
-  - Look into the different graphics formats
   - Better way to track buffer handles. What happens if we delete a buffer?
   - Think about how best to define our standard set of uniform blocks. I think I like the union approach 
   - Add support for custom uniform buffers on materials
@@ -54,14 +56,11 @@ Add to destructor of GLShader to delete it to free memory. In GLShaderProgram, d
 TODO: Projection matrix is ever so slightly off of what glm::perspective returns. Specifically in the first element and 6th i.e. second row second column
 TODO: Think about some cool ways to overload vector/matrix funcs to allow for some more useful and different stuff
 TODO: Look into how to handle (for now just in vec/mat stuff but in the future more heavy calculations) things like loss of precision, when should a small number just become 0, etc..
-TODO: Work on openGL renderer
 TODO: Implement a Fig enum for datatypes and have imgui handle translating so that layers don't need to know about ImGuiDataType
 TODO: Implement Tree and refactor stuff to use that
 TODO: Implement actual structures for Fig::Events (and maybe begin actually handling them in app), 
 TODO: ImGuiWidgets folder (i.e. reusable widgets like color picker)
 
-TODO: Vision for future is to have array simple structs represent particles and such, and hold the basic info such as position and mass (i.e. data oriented approach)
-for doing the physics on them, and then when we render have perhaps a pointer to a render object 
 
    /* 
    std::cout << std::fixed << std::setprecision(std::numeric_limits<double>::max_digits10);

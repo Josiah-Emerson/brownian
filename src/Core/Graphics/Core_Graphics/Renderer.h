@@ -24,6 +24,7 @@ namespace Core{
       public:
          ~IRendererSortedRegistryView() = default;
          virtual Pool<PositionComponent>& positionPool() = 0;
+         virtual Pool<Color3Component>& colorPool() = 0;
          virtual Pool<MeshComponent>& meshPool() = 0;
          virtual Pool<MaterialComponent>& materialPool() = 0;
    };
@@ -32,6 +33,7 @@ namespace Core{
    concept RendererRegistryViewer = 
       requires(T reg){
          {reg.template getPool<PositionComponent>() };
+         {reg.template getPool<Color3Component>() };
          {reg.template getPool<MeshComponent>() };
          {reg.template getPool<MaterialComponent>() };
       };
@@ -42,6 +44,7 @@ namespace Core{
          RendererSortedRegistryView(Reg& registry) : m_registry(registry) {}
 
          Pool<PositionComponent>& positionPool() override {return m_registry.template getPool<PositionComponent>();}
+         Pool<Color3Component>& colorPool() override {return m_registry.template getPool<Color3Component>();}
          Pool<MeshComponent>& meshPool() override {return m_registry.template getPool<MeshComponent>();}
          Pool<MaterialComponent>& materialPool() override {return m_registry.template getPool<MaterialComponent>();}
          
