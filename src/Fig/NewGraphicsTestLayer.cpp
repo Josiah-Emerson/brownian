@@ -14,8 +14,7 @@ NewGraphicsTestLayer::NewGraphicsTestLayer(Core::RenderDevice* device, Core::Ass
    m_mesh2 = m_assetManager.loadMesh("Resources/Meshes/cat/cat.obj");
    m_material = m_assetManager.loadMaterial("Resources/Materials/Color.fmat");
    m_registry.registerNewEntity( Core::tempComperand{}, Core::PositionComponent{{0, 0, 0}},
-         Core::Color3Component{{128, 128, 128}}, Core::MeshComponent{m_mesh1}, 
-         Core::MaterialComponent{m_material});
+         Core::MeshComponent{m_mesh1}, Core::MaterialComponent{m_material});
 }
 
 NewGraphicsTestLayer::~NewGraphicsTestLayer(){
@@ -62,10 +61,6 @@ void NewGraphicsTestLayer::renderUI(){
                m_registry.updateComponent(0, Core::MeshComponent{m_mesh1});
             }
          }
-
-         Core::Color3Component& color = 
-            m_registry.getPool<Core::Color3Component>().id(0);
-         colorGroup.rgbSelector("Mesh Color", color);
       }
 
    }

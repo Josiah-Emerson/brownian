@@ -24,7 +24,6 @@ class NewGraphicsTestLayer : public Core::Layer{
 
    private: 
       using Components = Core::ComponentPack<Core::PositionComponent,
-                                           Core::Color3Component,
                                            Core::MeshComponent,
                                            Core::MaterialComponent>;
       using Registry = Core::SortedRegistry<Core::tempComperand, Core::tempCompare, Components>;

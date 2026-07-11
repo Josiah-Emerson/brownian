@@ -52,7 +52,6 @@ namespace Core{
    // as an api of sorts
    struct UniformCameraData{
       Linear::fmat4 MVP; // MVP NEEDS TO BE IN COL MAJOR (?) ORDER
-      Linear::fvec3 color; // TODO: fvec4 ?
    };
    // Need to define also a set of vertex stuff like vertex position, UV texcoords and such
    // TODO: Update to Color4 type when implemented
