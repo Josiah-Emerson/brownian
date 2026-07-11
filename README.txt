@@ -3,10 +3,18 @@ GRAPHICS TODOs:
   - 
 
 LAST BASIC GRAPHICS STEPS: 
+  - Add support for custom uniform buffers on materials: 
+    - Materials have some type of map from the name to its value which could be like a:
+    enum dataType { FVEC3, ... }; 
+    union data { Linear::fvec3, ...}
+    struct CustomUniform{
+       dataType;
+       data;
+    };
+    Then Renderer could loop through those?
   - Update whatever those temp functions I had were 
   - Better way to track buffer handles. What happens if we delete a buffer?
   - Think about how best to define our standard set of uniform blocks. I think I like the union approach 
-  - Add support for custom uniform buffers on materials
 
 
 NEXT STEP: Create a physics systems 

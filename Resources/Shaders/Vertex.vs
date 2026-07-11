@@ -2,10 +2,11 @@
 
 layout(location = 0) in vec3 vertexPosition_modelSpace;
 
-layout(binding = 0, std140) uniform CameraData{
+layout(std140) uniform FIG_CAMERA_DATA{
    mat4 MVP;
-   vec3 color;
 } camera;
+
+uniform vec3 color;
 
 // uniform mat4 MVP;
 
@@ -16,5 +17,5 @@ void main(){
    // gl_Position = MVP * vec4(vertexPosition_modelSpace, 1);
    // fragmentColor = vec3(.2, 0, 1.f);
    // fragmentColor = vertexPosition_modelSpace;
-   fragmentColor = camera.color;
+   fragmentColor = vec3(0.2, 0.5, 0.8);
 }
