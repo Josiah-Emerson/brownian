@@ -8,6 +8,8 @@ add_library("Core::${dir}" ALIAS ${target})
 target_sources(${target} PRIVATE
    ${imgui_files}
    ${target}/Gui.cpp
+   ${target}/UniformVariableWidgetRegistry.cpp
+   ${target}/UniformVariableWidgets.cpp
 )
 
 # INCLUDE DIRECTORY

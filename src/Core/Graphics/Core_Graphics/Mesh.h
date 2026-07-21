@@ -4,15 +4,17 @@
 #include "Core_Graphics/ShaderPipeline.h"
 
 namespace Core{
+   // TODO: Overhaul the VertexData stuff so that it is far more flexible
    // Data for one vertex
    struct VertexData{
-      Linear::fvec3 position;
-
       static VertexLayout getVertexLayout(){
          return VertexLayout{{
-            { .location = 0, .dataType = ShaderDataType::F_VEC3, .offset = 0 } // Alternatively: offsetof(VertexData, position)
+            {.location = 0, .typeDesc = {.primType = PrimitiveType::FLOAT, .primCnt = 3}, .offset = 0}
          }, sizeof(VertexData)};
       }
+
+      private:
+      Linear::fvec3 position; // for sizeof();
    };
 
    struct Mesh{

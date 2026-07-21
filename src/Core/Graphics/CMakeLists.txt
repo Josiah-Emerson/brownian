@@ -8,8 +8,10 @@ add_library("Core::${dir}" ALIAS ${target})
 # SOURCES
 target_sources(${target} PRIVATE
    ${target}/Camera.cpp
+   ${target}/Material.cpp
    ${target}/RenderDevice.cpp
    ${target}/Renderer.cpp
+   ${target}/ShaderData.cpp
    ${target}/gl/GLCommandList.cpp
    ${target}/gl/GLRenderDevice.cpp
    ${target}/gl/OpenGL.cpp

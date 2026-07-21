@@ -1,20 +1,17 @@
+TODO: FIG_UNCREACHABLE
+TODO: Move imgui folder (and any other externals into externals folder)
+
 GRAPHICS TODOs:
   - Error handling in general (i.e. parsing/loading of .obj or .fmat files, buffer creation, etc...)
   - 
 
 LAST BASIC GRAPHICS STEPS: 
   - Add support for custom uniform buffers on materials: 
-    - Materials have some type of map from the name to its value which could be like a:
-    enum dataType { FVEC3, ... }; 
-    union data { Linear::fvec3, ...}
-    struct CustomUniform{
-       dataType;
-       data;
-    };
     Then Renderer could loop through those?
-  - Update whatever those temp functions I had were 
+    CURRENTLY HERE: 
+  - Deciding a concrete set of types for shader data
+  - Need to add some stuff for std140
   - Better way to track buffer handles. What happens if we delete a buffer?
-  - Think about how best to define our standard set of uniform blocks. I think I like the union approach 
 
 
 NEXT STEP: Create a physics systems 
@@ -68,6 +65,7 @@ TODO: Implement a Fig enum for datatypes and have imgui handle translating so th
 TODO: Implement Tree and refactor stuff to use that
 TODO: Implement actual structures for Fig::Events (and maybe begin actually handling them in app), 
 TODO: ImGuiWidgets folder (i.e. reusable widgets like color picker)
+TODO: Decouple application from imgui (see things like linux window)
 
 
    /* 

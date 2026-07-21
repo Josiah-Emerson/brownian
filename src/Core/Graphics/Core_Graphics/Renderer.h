@@ -54,12 +54,10 @@ namespace Core{
          Renderer(RenderDevice* device, AssetManager& assetManager);
 
          void renderEntities(IRendererSortedRegistryView* view, Camera& camera);
+
       private: 
          RenderDevice* m_device;
          AssetManager& m_assetManager;
    };
-   // Three types of shader vars: 
-   // Default as above
-   // per-vertex variables (defined by mesh)
-   // non-default versions of these (mainly probbaly uniform) defined by Material, which are not gonna be implemented now
+
 } // namespace Core

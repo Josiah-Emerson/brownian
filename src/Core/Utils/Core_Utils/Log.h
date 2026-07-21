@@ -85,6 +85,6 @@ namespace Core{
 #define FIG_LOG_MEDIUM_WARNING(msg)
 #define FIG_LOG_HIGH_WARNING(msg)
 #define FIG_ASSERT(msg)
-#define FIG_UNCREACHABLE(msg)
+#define FIG_UNREACHABLE(msg)
 #define FIG_LOG_OUTPUT_LOG_INFO 
 #endif

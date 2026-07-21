@@ -10,6 +10,7 @@ target_sources(${target} PRIVATE
    ${target}/AssetManager.cpp
    ${target}/FMATReader.cpp
    ${target}/MeshLoader.cpp
+   ${target}/UVarDescriptionLoader.cpp
    ${target}/MeshFormats/OBJLoader.cpp
    ${target}/MeshFormats/OBJParser.cpp
 )
@@ -21,4 +22,8 @@ target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${target} PRIVATE
    Core::Graphics
    Core::Utils
+   Core::UI
 )
+
+# JSON PARSER
+target_link_libraries(${target} PRIVATE nlohmann_json::nlohmann_json)

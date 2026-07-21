@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderer.h"
 #include "Core_ECS/Components.h"
+#include "Core_Utils/Linear/Vector.h"
 #include "RenderPass.h"
 #include "Core_Graphics/CommandList.h"
 #include "Core_Graphics/RenderDevice.h"
@@ -72,10 +73,16 @@ namespace Core{
          const Material& material = m_assetManager.getMaterial(h_material);
          const Mesh& mesh = m_assetManager.getMesh(h_mesh);
 
-         cmd->bindShaderPipeline(material.shaderPipelineHandle);
+         cmd->bindShaderPipeline(material.getShaderPipelineHandle());
          cmd->bindVertexBuffer(mesh.vBuf);
          cmd->bindIndexBuffer(mesh.eBuf);
-         cmd->setUniformBufferData(StandardUniformBlock::CAMERA_DATA, &data);
+         cmd->setUniformBufferData(StandardUniformBlock::FIG_CAMERA_DATA, &data);
+         
+         // bind any custom values
+         const std::vector<Material::UniformMetadata>& uniforms = material.getUniformMetadata();
+         for(const Material::UniformMetadata& uniform : uniforms){
+            cmd->setUniformVariable(uniform.name, material.getVariable(uniform.name));
+         }
 
          cmd->drawElement(mesh.elementCnt);
       }

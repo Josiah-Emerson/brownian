@@ -3,6 +3,8 @@
 #include <memory>
 #include "Core_Graphics/Buffer.h"
 #include "Core_Graphics/CommandList.h"
+#include "Core_Graphics/ShaderPipeline.h"
+#include "Core_Graphics/ShaderData.h"
 #include "Core_Window/Window.h"
 
 namespace Core{
@@ -24,7 +26,6 @@ namespace Core{
    // Material -     Created by: AssetManager
    //                Managed by: MeshHandles
 
-   struct ShaderPipelineDesc;
    struct BufferHandle{
       std::size_t idx;
    };
@@ -37,6 +38,10 @@ namespace Core{
       std::size_t idx;
    };
 
+   struct UniformReflectionMetadata{
+      std::string variableName;
+      ShaderTypeDescription typeDesc;
+   };
 
    class RenderDevice{
       public: 
@@ -49,11 +54,10 @@ namespace Core{
 
          virtual ShaderPipelineHandle createShaderPipeline(const ShaderPipelineDesc& info) = 0;
 
+         virtual const std::vector<UniformReflectionMetadata>& reflectUniforms(ShaderPipelineHandle hPipeline) = 0;
+
          virtual CommandList* beginCommandList() = 0;
          virtual void submitCommandList(CommandList* cmd) = 0;
-
-      protected: 
-      private: 
    };
 
 } // namespace Core

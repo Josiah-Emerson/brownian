@@ -17,6 +17,8 @@
 #endif
 
 
+// TODO: Could likely be faster on the id checks in the functions which take int id = -1 as an argument
+// (right now we create a temporary std::string for all of them)
 namespace Core{
    class GuiImpl{
       public: 
@@ -33,6 +35,7 @@ namespace Core{
          void endWindow();
 
          bool addButton(const char* label, bool sameLine);
+         bool addCheckbox(const char* label, bool& val, bool sameLine);
          bool addRGBSelector(const char* label, Linear::fvec3& color, bool sameLine);
 
          bool addSliderHelper(const char* label, void* data, ImGuiDataType imguiType, void* min, void* max, bool sameLine);
@@ -123,6 +126,13 @@ namespace Core{
       return ImGui::Button(label);
    }
 
+   bool GuiImpl::addCheckbox(const char* label, bool& val, bool sameLine){
+      if(sameLine)
+         ImGui::SameLine();
+
+      return ImGui::Checkbox(label, &val);
+   }
+
    bool GuiImpl::addRGBSelector(const char* label, Linear::fvec3& color, bool sameLine){
       if(sameLine)
          ImGui::SameLine();
@@ -144,6 +154,8 @@ namespace Core{
          return addSliderHelper(label, &var, ImGuiDataType_S32, &min, &max, sameLine);
       } else if constexpr (std::is_same_v<T, float>){
          return addSliderHelper(label, &var, ImGuiDataType_Float, &min, &max, sameLine);
+      } else if constexpr (std::is_same_v<T, double>){
+         return addSliderHelper(label, &var, ImGuiDataType_Double, &min, &max, sameLine);
       } else {
          static_assert(!sizeof(T), "Data type not supported");
       }
@@ -199,17 +211,38 @@ namespace Core{
       m_gui->m_impl->addText(text, sameLine);
    }
 
-   bool Gui::Widgets::button(const char* label, bool sameLine){
+   bool Gui::Widgets::button(const char* label, int id, bool sameLine){
+      if(id >= 0){
+         std::string tmp = label;
+         tmp += "##" + std::to_string(id);
+         return m_gui && m_gui->m_impl->addButton(tmp.c_str(), sameLine);
+      }
+
       return m_gui && m_gui->m_impl->addButton(label, sameLine);
    }
 
-   bool Gui::Widgets::rgbSelector(const char* label, Linear::fvec3& color, bool sameLine){
+   bool Gui::Widgets::checkbox(const char* label, bool& val, int id, bool sameLine){
+      if(id >= 0){
+         std::string tmp = label;
+         tmp += "##" + std::to_string(id);
+         return m_gui && m_gui->m_impl->addCheckbox(tmp.c_str(), val, sameLine);
+      }
+
+      return m_gui && m_gui->m_impl->addCheckbox(label, val, sameLine);
+   }
+
+   bool Gui::Widgets::rgbSelector(const char* label, Linear::fvec3& color, int id, bool sameLine){
+      if(id >= 0){
+         std::string tmp = label;
+         tmp += "##" + std::to_string(id);
+         return m_gui && m_gui->m_impl->addRGBSelector(tmp.c_str(), color, sameLine);
+      }
       return m_gui && m_gui->m_impl->addRGBSelector(label, color, sameLine);
    }
 
-   bool Gui::Widgets::rgbSelector(const char* label, Color3& color, bool sameLine){
+   bool Gui::Widgets::rgbSelector(const char* label, Color3& color, int id, bool sameLine){
       Linear::fvec3 floatVec { color.R / 255.f, color.G / 255.f, color.B / 255.f };
-      if(!rgbSelector(label, floatVec, sameLine))
+      if(!rgbSelector(label, floatVec, id, sameLine))
          return false;
       floatVec = floatVec * 255;
       // TODO: Assert if > 255 ?
@@ -221,16 +254,25 @@ namespace Core{
    }
 
    template<typename T>
-   bool Gui::Widgets::slider(const char* label, T& var, T min, T max, bool sameLine){
+   bool Gui::Widgets::slider(const char* label, T& var, T min, T max, int id, bool sameLine){
+      if(id >= 0){
+         std::string tmp = label;
+         tmp += "##" + std::to_string(id);
+         return m_gui && m_gui->m_impl->addSlider(tmp.c_str(), var, min, max, sameLine);
+      }
+
       return m_gui && m_gui->m_impl->addSlider(label, var, min, max, sameLine);
    }
 
+
 #define ADD_SLIDER_TYPE(Type) \
-   template bool Gui::Widgets::slider<Type>(const char*, Type&, Type, Type, bool);
+   template bool Gui::Widgets::slider<Type>(const char*, Type&, Type, Type, int, bool);
 
    ADD_SLIDER_TYPE(std::int32_t);
    ADD_SLIDER_TYPE(float);
+   ADD_SLIDER_TYPE(double);
 #undef ADD_SLIDER_TYPE
+
 
    Gui::Group::Group(Gui* gui, const char* label, bool beginExpanded){
       if(gui && gui->m_impl->beginGroup(label, beginExpanded))

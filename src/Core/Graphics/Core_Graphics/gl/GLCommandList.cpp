@@ -1,8 +1,10 @@
 #include "GLCommandList.h"
 #include "Core_Graphics/RenderPass.h"
+#include "Core_Graphics/ShaderData.h"
 #include "Core_Graphics/gl/GLRenderDevice.h"
 #include "Core_Utils/Log.h"
 #include <GL/glext.h>
+#include <algorithm>
 #include <cstring>
 
 namespace Core{
@@ -75,7 +77,7 @@ namespace Core{
       m_openGL.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf.id);
    }
 
-   void GLCommandList::setUniformBufferData(StandardUniformBlock block, void* data){
+   void GLCommandList::setUniformBufferData(StandardUniformBlock block, const void* data){
       GLBuffer& buf = m_glDevice.getBuffer(block);
       m_openGL.glBindBuffer(GL_UNIFORM_BUFFER, buf.id);
       m_openGL.glBufferSubData(GL_UNIFORM_BUFFER, 0, buf.size, data);
@@ -83,7 +85,7 @@ namespace Core{
       buf.hasData = true;
    }
 
-   void GLCommandList::setUniformBufferData(BufferHandle handle, void* data){
+   void GLCommandList::setUniformBufferData(BufferHandle handle, const void* data){
       FIG_UNCREACHABLE("This function is not implemented yet. Just keeping it here in case we want to use it to set custom uniform blocks for shaders/materials")
       return;
 
@@ -109,6 +111,115 @@ namespace Core{
          FIG_LOG_HIGH_WARNING("Need to figure out a way to not use the magic 0 constant")
          w = false;
       }
+   }
+
+   void GLCommandList::setUniformVariable(const std::string& variableName, const void* data){
+      FIG_ASSERT(data, "Trying to set value of data with nullptr");
+      FIG_ASSERT(m_pipelineIsActive, "No currently bound pipeline");
+
+      const GLShaderPipeline& pipeline = m_glDevice.getShaderPipeline(m_currentPipelineHandle);
+      auto it = std::find_if(pipeline.uniforms.begin(), pipeline.uniforms.end(), 
+            [&variableName](const UniformReflectionMetadata& var) {
+               return var.variableName == variableName;
+            });
+
+      FIG_ASSERT(it != pipeline.uniforms.end(), "Trying to set a uniform variable with a name that is not a variable");
+
+      // TODO: Uniform location speed up (see GLRenderDevice TODO in one of the structs)
+      GLint location = m_openGL.glGetUniformLocation(pipeline.programID, it->variableName.c_str());
+      FIG_ASSERT(location != -1, "Could not find var name. This is more problematic because we should have already checked this");
+
+      // only fmats for opengl 
+      // double depends on version/extensions 
+      // bool use single set. 0 = false, non 0 = true
+      const ShaderTypeDescription& typeDesc = it->typeDesc;
+      switch(typeDesc.primType){
+         case(PrimitiveType::BOOL):
+            m_openGL.glUniform1f(location, (*((const bool*)data)) ? 1.f : 0.f);
+            break;
+         case(PrimitiveType::I32): 
+            {
+               const GLint* ptr = static_cast<const GLint*>(data);
+               switch(typeDesc.primCnt){
+                  case(1):
+                     m_openGL.glUniform1iv(location, 1, ptr);
+                     break;
+                  case(2):
+                     m_openGL.glUniform2iv(location, 1, ptr);
+                     break;
+                  case(3):
+                     m_openGL.glUniform3iv(location, 1, ptr);
+                     break;
+                  case(4):
+                     m_openGL.glUniform4iv(location, 1, ptr);
+                     break;
+                  case(9):
+                  case(16):
+                     FIG_UNCREACHABLE("OpenGL does not do int matrices")
+                     // TODO: Handle this better (convert to float and try?)
+                     break;
+               }
+               break;
+            } // I32 case
+         case(PrimitiveType::FLOAT):
+            {
+               // TODO: Delete this if once I get rid of the medium warning below
+               if(typeDesc.primCnt == 9 || typeDesc.primCnt == 16){
+                  static bool w { true };
+                  if(w){
+                     FIG_LOG_MEDIUM_WARNING("Setting a uniform of type mat3/4 but I have not thought about whether I want to automatically transpose it or not. If you need this matrix right now, then think about how to handle")
+                     w = false;
+                  }
+               }
+               const GLfloat* ptr = static_cast<const GLfloat*>(data);
+               switch(typeDesc.primCnt){
+                  case(1):
+                     m_openGL.glUniform1fv(location, 1, ptr);
+                     break;
+                  case(2):
+                     m_openGL.glUniform2fv(location, 1, ptr);
+                     break;
+                  case(3):
+                     m_openGL.glUniform3fv(location, 1, ptr);
+                     break;
+                  case(4):
+                     m_openGL.glUniform4fv(location, 1, ptr);
+                     break;
+                  case(9):
+                     m_openGL.glUniformMatrix3fv(location, 1, GL_FALSE, ptr);
+                     break;
+                  case(16):
+                     m_openGL.glUniformMatrix4fv(location, 1, GL_FALSE, ptr);
+                     break;
+               }
+               break;
+            } // FLOAT case
+         case(PrimitiveType::DOUBLE):
+            {
+               // TODO: Deal with this
+               FIG_UNCREACHABLE("OpenGL only supports doubles with a certain version or extension, and i don't wanna deal with that rn")
+               break;
+            }
+         case(PrimitiveType::INVALID):
+            // TODO: Deal with this
+            FIG_UNCREACHABLE("Invalid type");
+            break;
+      }
+   }
+
+   void GLCommandList::setUniformVariable(const std::string& variableName, const ShaderData& data){
+      static bool w { true };
+      if(w){
+         // NOTE/TODO: For below, I can probably pull out the logic from here and the const void* version 
+         // and figure out what those need to find on their own, and then send it to its own central func
+         FIG_LOG_LOW_WARNING("Because this function accepts const ShaderData& instead of const void*, it should check to make sure the type passed and the type expected for this variable are the same, but it doesn't cuz I didn't wanna do that")
+         w = false;
+      }
+      // TODO: This can provide some extra handling to ensure we are setting the right things
+      const void* ptr = std::visit(ShaderVisitors::GetConstVoidPtr{data}, data);
+      // TODO: Handle this... Can this even happen?
+      FIG_ASSERT(ptr, "nullptr returned from std::visit")
+      setUniformVariable(variableName, ptr);
    }
 
    void GLCommandList::drawElement(std::size_t indexCount){

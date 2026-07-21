@@ -22,7 +22,9 @@ class NewGraphicsTestLayer : public Core::Layer{
 
       void renderUI();
 
+
    private: 
+
       using Components = Core::ComponentPack<Core::PositionComponent,
                                            Core::MeshComponent,
                                            Core::MaterialComponent>;

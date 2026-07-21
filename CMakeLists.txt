@@ -48,6 +48,7 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/imgui)
 file(GLOB_RECURSE imgui_files "imgui/*.cpp")
 
+add_subdirectory(external)
 add_subdirectory(src)
 
 if(TESTS)

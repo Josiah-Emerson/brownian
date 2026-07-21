@@ -1,5 +1,7 @@
 #include "NewGraphicsTestLayer.h"
 #include "Core_ECS/Components.h"
+#include <cstring>
+#include <variant>
 
 NewGraphicsTestLayer::NewGraphicsTestLayer(Core::RenderDevice* device, Core::AssetManager& assetManager)
    : m_gui { }
@@ -63,6 +65,34 @@ void NewGraphicsTestLayer::renderUI(){
          }
       }
 
+      if(auto materialGroup = window.group("Material Settings")){
+         Core::Material& mat = m_assetManager.getMaterial(m_material);
+         const auto& metadata = mat.getUniformMetadata();
+         for(const Core::Material::UniformMetadata& uniform : metadata){
+            bool changed { false };
+            Core::ShaderData var = mat.getVariable(uniform.name);
+            void* ptr = std::visit(Core::ShaderVisitors::GetVoidPtr {var}, var);
+
+            std::byte* base = static_cast<std::byte*>(ptr);
+            std::size_t offset { 0 };
+
+            for(std::size_t i { 0 }; i < uniform.widgets.size(); ++i){
+               if(uniform.widgets[i]->draw(
+                        materialGroup, uniform.labels[i], base + offset, i)){
+                  changed = true;
+               }
+
+               offset += static_cast<std::size_t>(uniform.widgets[i]->primitiveCount()) 
+                  * uniform.widgets[i]->primitiveSize();
+            }
+
+            if(changed){
+               mat.setVariable(uniform.name, var);
+            }
+         }
+      }
+
    }
    m_gui.render();
 }
+

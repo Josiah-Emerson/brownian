@@ -2,6 +2,7 @@
 #include "Core_Graphics/ShaderPipeline.h"
 #include "Core_Graphics/gl/GLCommandList.h"
 #include "Core_Utils/Log.h"
+#include "UI/Core_UI/UniformVariableWidgets.h"
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <fstream>
@@ -19,13 +20,13 @@ namespace Core{
       BufferDesc desc { .bUsage = bUsage };
 
       // CAMERA_DATA
-      desc.size = sizeof(UniformCameraData);
+      desc.size = sizeof(UniformCameraData); // TODO: Will need to figure out a way to translate to std140
       BufferHandle hBuf = createBuffer(desc);
       const GLBuffer& buf = getBuffer(hBuf);
       m_openGL.glBindBufferBase(GL_UNIFORM_BUFFER,
-            static_cast<GLuint>(StandardUniformBlock::CAMERA_DATA),
+            static_cast<GLuint>(StandardUniformBlock::FIG_CAMERA_DATA),
             buf.id);
-      m_stdUniformBufferHandles[static_cast<std::size_t>(StandardUniformBlock::CAMERA_DATA)] = hBuf;
+      m_stdUniformBufferHandles[static_cast<std::size_t>(StandardUniformBlock::FIG_CAMERA_DATA)] = hBuf;
    }
 
    BufferHandle GLRenderDevice::createBuffer(const BufferDesc& desc, const void* initialData){
@@ -87,12 +88,12 @@ namespace Core{
    }
 
    ShaderPipelineHandle GLRenderDevice::createShaderPipeline(const ShaderPipelineDesc& info){
-      GLuint vID = tmpCompileShader(info.vertex.c_str(), GL_VERTEX_SHADER);
-      GLuint fID = tmpCompileShader(info.fragment.c_str(), GL_FRAGMENT_SHADER);
+      const GLShader& vertex = loadShader(info.vertex.c_str(), GLShaderType::VERTEX_SHADER);
+      const GLShader& fragment = loadShader(info.fragment.c_str(), GLShaderType::FRAGMENT_SHADER);
 
       GLuint programID = m_openGL.glCreateProgram();
-      m_openGL.glAttachShader(programID, vID);
-      m_openGL.glAttachShader(programID, fID);
+      m_openGL.glAttachShader(programID, vertex.id);
+      m_openGL.glAttachShader(programID, fragment.id);
 
       m_openGL.glLinkProgram(programID);
       GLint linkResult;
@@ -101,16 +102,16 @@ namespace Core{
          FIG_UNCREACHABLE("failed to link program")
       }
 
-      // bind uniforms
-      FIG_ASSERT(info.uLayout.blocks.empty(), "Custom uniform blocks detected but are not implemented yet")
-      for(const UniformBlock& block : info.uLayout.blocks){
-         const GLBuffer& buf = getBuffer(block.bufferHandle);
-         // m_openGL.glUniformBlockBinding(programID, block.blockIndex, block.blockIndex);
-         m_openGL.glBindBufferBase(GL_UNIFORM_BUFFER, 0, buf.id);
-      }
+      std::vector<UniformReflectionMetadata> uniforms = internalReflectUniforms(programID);
 
-      m_shaderPipelines.emplace_back(programID, info.vLayout, info.uLayout);
+      m_shaderPipelines.emplace_back(programID, info.vLayout, uniforms);
       return ShaderPipelineHandle { m_shaderPipelines.size() - 1 };
+   }
+
+   const std::vector<UniformReflectionMetadata>& GLRenderDevice::reflectUniforms(ShaderPipelineHandle hPipeline){
+      const GLShaderPipeline& pipeline = getShaderPipeline(hPipeline);
+
+      return pipeline.uniforms;
    }
 
    CommandList* GLRenderDevice::beginCommandList(){
@@ -168,23 +169,30 @@ namespace Core{
 
       for(const VertexAttribute& vAttr : pipeline.vLayout.attributes) {
          m_openGL.glEnableVertexAttribArray(vAttr.location);
-         GLint numComponents { 0 };
+         GLint numComponents = vAttr.typeDesc.primCnt;
+         if(numComponents > 4){
+            // TODO: Do something about this
+            FIG_UNCREACHABLE("For vertex attributes, numComponents must be 1, 2, 3, 4, or GL_BGRA")
+         }
          GLenum type;
-         switch(vAttr.dataType){
-            case(ShaderDataType::F_VEC3):
-               numComponents = 3;
+
+         // TODO: Actually handle any of the cases where we have an invalid prim type
+         switch(vAttr.typeDesc.primType){
+            case(PrimitiveType::I32):
+               type = GL_INT;
+               break;
+            case(PrimitiveType::FLOAT):
                type = GL_FLOAT;
                break;
-            case(ShaderDataType::F_VEC4):
-               numComponents = 4;
-               type = GL_FLOAT;
+            case(PrimitiveType::DOUBLE):
+               FIG_UNCREACHABLE("Currently our openGL implementation does not support double for vertex attributes")
+               // type = GL_DOUBLE;
+               // TODO: GL_DOUBLE only accepted by glVertexAttribLPointer (see glVertexAttribPointer docs)
                break;
-            case(ShaderDataType::F_MAT4):
-               FIG_UNCREACHABLE("Not implemented F_MAT4 data type for vertex data yet")
+            default:
+               FIG_UNCREACHABLE("The primitive type passed is not supported by openGL")
                break;
          }
-
-         FIG_ASSERT(numComponents != 0, "Switch on data types did not update. Likely an unhandled data type")
 
          // TODO: Check for normalization
          m_openGL.glVertexAttribPointer(vAttr.location, numComponents, 
@@ -196,21 +204,22 @@ namespace Core{
       return vao;
    }
 
-   bool GLRenderDevice::VAOKey::operator==(const VAOKey& other) const{
-      return shaderProgramID == other.shaderProgramID && 
-         bufferID == other.bufferID;
+   const GLShader& GLRenderDevice::loadShader(const std::string& path, GLShaderType type){
+      auto it = m_shaderCache.find(path);
+      if(it != m_shaderCache.end()){
+         FIG_ASSERT(it->second.shaderType == type, "A cached shader was found for the given path, however there is a mismatch in expected shader type and cached shader type")
+         return it->second;
+      }
+
+      GLuint id = compileShader(path.c_str(),
+            static_cast<GLenum>(type));
+      auto insert = m_shaderCache.emplace(path, GLShader{id, type});
+
+      FIG_ASSERT(insert.second, "Insertion of new GLShader into cache did not take place");
+      return insert.first->second;
    }
 
-   std::size_t GLRenderDevice::VAOKeyHash::operator()(const VAOKey& key) const noexcept{
-      // TODO: Is this fine? Can this be quicker if we only care about no collisions?
-      // does it need to be quicker?
-      std::size_t h1 = std::hash<GLuint>{}(key.shaderProgramID);
-      std::size_t h2 = std::hash<GLuint>{}(key.bufferID);
-      return h1 ^ (h2 << 1);
-   }
-
-   GLuint GLRenderDevice::tmpCompileShader(const char* path, GLenum shaderType){
-      FIG_LOG_LOW_WARNING("Use of a tmp function")
+   GLuint GLRenderDevice::compileShader(const char* path, GLenum shaderType){
       GLuint id = m_openGL.glCreateShader(shaderType);
       std::string shaderCode;
       std::ifstream shaderStream(path, std::ios::in);
@@ -245,6 +254,152 @@ namespace Core{
       }
 
       return id;
+   }
+
+   ShaderTypeDescription GLRenderDevice::glTypeToShaderTypeDescription(GLenum glType){
+      ShaderTypeDescription ret { };
+      switch(glType){
+         case(GL_BOOL):
+            ret.primType = PrimitiveType::BOOL;
+            ret.primCnt = 1;
+            break;
+         case(GL_INT):
+            ret.primType = PrimitiveType::I32;
+            ret.primCnt = 1;
+            break;
+         case(GL_INT_VEC2):
+            ret.primType = PrimitiveType::I32;
+            ret.primCnt = 2;
+            break;
+         case(GL_INT_VEC3):
+            ret.primType = PrimitiveType::I32;
+            ret.primCnt = 3;
+            break;
+         case(GL_INT_VEC4):
+            ret.primType = PrimitiveType::I32;
+            ret.primCnt = 4;
+            break;
+         case(GL_FLOAT):
+            ret.primType = PrimitiveType::FLOAT;
+            ret.primCnt = 1;
+            break;
+         case(GL_FLOAT_VEC2):
+            ret.primType = PrimitiveType::FLOAT;
+            ret.primCnt = 2;
+            break;
+         case(GL_FLOAT_VEC3):
+            ret.primType = PrimitiveType::FLOAT;
+            ret.primCnt = 3;
+            break;
+         case(GL_FLOAT_VEC4):
+            ret.primType = PrimitiveType::FLOAT;
+            ret.primCnt = 4;
+            break;
+         case(GL_FLOAT_MAT3):
+            ret.primType = PrimitiveType::FLOAT;
+            ret.primCnt = 9;
+            break;
+         case(GL_FLOAT_MAT4):
+            ret.primType = PrimitiveType::FLOAT;
+            ret.primCnt = 16;
+            break;
+         case(GL_DOUBLE):
+            ret.primType = PrimitiveType::DOUBLE;
+            ret.primCnt = 1;
+            break;
+         case(GL_DOUBLE_VEC2):
+            ret.primType = PrimitiveType::DOUBLE;
+            ret.primCnt = 2;
+            break;
+         case(GL_DOUBLE_VEC3):
+            ret.primType = PrimitiveType::DOUBLE;
+            ret.primCnt = 3;
+            break;
+         case(GL_DOUBLE_VEC4):
+            ret.primType = PrimitiveType::DOUBLE;
+            ret.primCnt = 4;
+            break;
+         case(GL_DOUBLE_MAT3):
+            ret.primType = PrimitiveType::DOUBLE;
+            ret.primCnt = 9;
+            break;
+         case(GL_DOUBLE_MAT4):
+            ret.primType = PrimitiveType::DOUBLE;
+            ret.primCnt = 16;
+            break;
+      }
+
+      return ret;
+   }
+
+   std::vector<UniformReflectionMetadata> GLRenderDevice::internalReflectUniforms(GLuint programID){
+      // NOTE: This currently skips any uniform in a uniform block (i.e. it assumes a uniform block is one of the default fig uniforms that fig sets)
+      // This enumerates all used uniforms in a shader which are custom to that shader and are likely to be wanted to be controlled by a user
+      // TODO: add checks to ensure programID is actually the name of a valid program
+      GLint totalUniformCount;
+      m_openGL.glGetProgramiv(programID, GL_ACTIVE_UNIFORMS, &totalUniformCount);
+
+      // enumerate indices
+      GLuint* allIndices = new GLuint[totalUniformCount];
+      for(std::size_t i { 0 }; i < totalUniformCount; ++i){
+         allIndices[i] = i;
+      }
+
+      GLint* blockIndices = new GLint[totalUniformCount];
+      m_openGL.glGetActiveUniformsiv(programID, totalUniformCount, allIndices, GL_UNIFORM_BLOCK_INDEX, blockIndices);
+
+      std::vector<GLuint> customUniformIndices;
+      for(std::size_t i { 0 }; i < totalUniformCount; ++i){
+         if(blockIndices[i] == -1){ // not in a uniform block -> custom uniform variable
+            customUniformIndices.push_back(i);
+         }
+      }
+      // TODO: should we delete these at end of function or when we don't need them anymore?
+      // NOTE: If we put at end we need to make sure we still delete them on any early returns...
+      delete[] blockIndices;
+      delete[] allIndices;
+
+      if(customUniformIndices.empty()){ // no customs
+         return { };
+      }
+
+      GLint* varNameLengths = new GLint[customUniformIndices.size()];
+      GLint* varDatatype = new GLint[customUniformIndices.size()];
+
+      m_openGL.glGetActiveUniformsiv(programID, customUniformIndices.size(), 
+            customUniformIndices.data(), GL_UNIFORM_NAME_LENGTH, varNameLengths);
+      m_openGL.glGetActiveUniformsiv(programID, customUniformIndices.size(), 
+            customUniformIndices.data(), GL_UNIFORM_TYPE, varDatatype);
+
+      std::vector<UniformReflectionMetadata> reflection;
+      reflection.reserve(customUniformIndices.size());
+
+      for(std::size_t i { 0 }; i < customUniformIndices.size(); ++i){
+         char* name = new char[varNameLengths[i]];
+
+         m_openGL.glGetActiveUniformName(programID, customUniformIndices[i], varNameLengths[i], NULL, name);
+         reflection.emplace_back(UniformReflectionMetadata{ name, glTypeToShaderTypeDescription(varDatatype[i]) });
+
+         delete[] name;
+      }
+
+      delete[] varNameLengths;
+      delete[] varDatatype;
+
+      return reflection;
+   }
+
+   bool GLRenderDevice::VAOKey::operator==(const VAOKey& other) const{
+      return shaderProgramID == other.shaderProgramID && 
+         bufferID == other.bufferID;
+   }
+
+   std::size_t GLRenderDevice::VAOKeyHash::operator()(const VAOKey& key) const noexcept{
+      // TODO: Is this fine? Can this be quicker if we only care about no collisions?
+      // does it need to be quicker?
+      std::size_t h1 = std::hash<GLuint>{}(key.shaderProgramID);
+      std::size_t h2 = std::hash<GLuint>{}(key.bufferID);
+      return h1 ^ (h2 << 1);
    }
 
 
