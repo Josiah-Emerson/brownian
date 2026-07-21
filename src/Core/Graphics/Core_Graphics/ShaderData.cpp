@@ -16,7 +16,7 @@ namespace Core{
                break;
          }
 
-         FIG_UNCREACHABLE("Type was either unhandled or we don't handle all PrimitiveTypes")
+         FIG_UNREACHABLE("Type was either unhandled or we don't handle all PrimitiveTypes")
          return {};
       }
 

@@ -9,7 +9,7 @@ namespace Core{
       if(!fstrm.is_open()){
          std::string msg  = "Could not open file ";
          msg += path;
-         FIG_UNCREACHABLE(msg.c_str())
+         FIG_UNREACHABLE(msg.c_str())
       }
 
       using json = nlohmann::json;

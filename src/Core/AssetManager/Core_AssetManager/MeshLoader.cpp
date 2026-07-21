@@ -8,7 +8,7 @@ namespace Core{
       if(path.extension() == ".obj"){ // .obj
          return std::make_unique<OBJLoader>(rd);
       }else{
-         FIG_UNCREACHABLE("Unsupported mesh type")
+         FIG_UNREACHABLE("Unsupported mesh type")
       }
 
       return nullptr;

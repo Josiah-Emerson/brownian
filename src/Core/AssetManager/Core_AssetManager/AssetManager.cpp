@@ -192,7 +192,7 @@ namespace Core{
             break;
       }
 
-      FIG_UNCREACHABLE("Either invalid primType or unhandled prim type");
+      FIG_UNREACHABLE("Either invalid primType or unhandled prim type");
       return { };
    }
 
@@ -231,7 +231,7 @@ namespace Core{
                break;
             }
          default:
-            FIG_UNCREACHABLE("invalid or unhandled primitive type")
+            FIG_UNREACHABLE("invalid or unhandled primitive type")
             break;
       }
 

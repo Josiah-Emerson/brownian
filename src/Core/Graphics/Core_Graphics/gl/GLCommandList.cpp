@@ -86,7 +86,7 @@ namespace Core{
    }
 
    void GLCommandList::setUniformBufferData(BufferHandle handle, const void* data){
-      FIG_UNCREACHABLE("This function is not implemented yet. Just keeping it here in case we want to use it to set custom uniform blocks for shaders/materials")
+      FIG_UNREACHABLE("This function is not implemented yet. Just keeping it here in case we want to use it to set custom uniform blocks for shaders/materials")
       return;
 
       static bool outputWarning { true };
@@ -155,7 +155,7 @@ namespace Core{
                      break;
                   case(9):
                   case(16):
-                     FIG_UNCREACHABLE("OpenGL does not do int matrices")
+                     FIG_UNREACHABLE("OpenGL does not do int matrices")
                      // TODO: Handle this better (convert to float and try?)
                      break;
                }
@@ -197,12 +197,12 @@ namespace Core{
          case(PrimitiveType::DOUBLE):
             {
                // TODO: Deal with this
-               FIG_UNCREACHABLE("OpenGL only supports doubles with a certain version or extension, and i don't wanna deal with that rn")
+               FIG_UNREACHABLE("OpenGL only supports doubles with a certain version or extension, and i don't wanna deal with that rn")
                break;
             }
          case(PrimitiveType::INVALID):
             // TODO: Deal with this
-            FIG_UNCREACHABLE("Invalid type");
+            FIG_UNREACHABLE("Invalid type");
             break;
       }
    }

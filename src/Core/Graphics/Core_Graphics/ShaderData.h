@@ -149,7 +149,7 @@ namespace Core{
                }
          }
 
-         FIG_UNCREACHABLE("Invalid or unhandled primitive count")
+         FIG_UNREACHABLE("Invalid or unhandled primitive count")
          return {};
       }
 

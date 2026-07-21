@@ -17,7 +17,7 @@ namespace Core{
 
    OBJParser::OBJObject OBJParser::parse(std::ifstream& strm){
       if(!strm.is_open()){
-         FIG_UNCREACHABLE("stream not open")
+         FIG_UNREACHABLE("stream not open")
       }
 
       std::string line;
@@ -53,7 +53,7 @@ namespace Core{
 
       std::string str = "Unknown keyword token encountered: ";
       str += keyword;
-      FIG_UNCREACHABLE(str.c_str());
+      FIG_UNREACHABLE(str.c_str());
 
       return UNKNOWN;
    }
@@ -63,7 +63,7 @@ namespace Core{
          // UNKNOWN / UNSUPPORTED
          case(UNKNOWN):
          case(UNSUPPORTED):
-            // FIG_UNCREACHABLE("Have not decided how to handle this case yet")
+            // FIG_UNREACHABLE("Have not decided how to handle this case yet")
             break;
 
          case(COMMENT):
@@ -115,7 +115,7 @@ namespace Core{
          }
 
          if(vertex <= 0){
-            FIG_UNCREACHABLE("Vertex reference is either negative (not supported yet) or 0 which makes no sense");
+            FIG_UNREACHABLE("Vertex reference is either negative (not supported yet) or 0 which makes no sense");
          }
          std::size_t vIdx = vertex;
          m_largestVertexRef = std::max(m_largestVertexRef, vIdx);
@@ -133,7 +133,7 @@ namespace Core{
          str += m_obj.vertices.size();
          str += ". The largest vertex referenced was: ";
          str += m_largestVertexRef;
-         FIG_UNCREACHABLE(str.c_str());
+         FIG_UNREACHABLE(str.c_str());
       }
    }
 

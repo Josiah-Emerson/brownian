@@ -19,7 +19,7 @@ namespace Core{
       if(!fstrm.is_open()){
          std::string str {"Error opening file: "};
          str += path;
-         FIG_UNCREACHABLE(str.c_str());
+         FIG_UNREACHABLE(str.c_str());
       }
 
       OBJParser parser { };

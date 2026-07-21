@@ -1,16 +1,12 @@
-TODO: FIG_UNCREACHABLE
+TODO: FIG_UNREACHABLE
 TODO: Move imgui folder (and any other externals into externals folder)
 
-GRAPHICS TODOs:
-  - Error handling in general (i.e. parsing/loading of .obj or .fmat files, buffer creation, etc...)
-  - 
 
-LAST BASIC GRAPHICS STEPS: 
-  - Add support for custom uniform buffers on materials: 
-    Then Renderer could loop through those?
-    CURRENTLY HERE: 
-  - Deciding a concrete set of types for shader data
-  - Need to add some stuff for std140
+GRAPHICS TODO(s) LEFT:
+  - Add a way to translate our uniform blocks to std140. Right now it doesn't matter as 
+  we only have one block with a single mat4 but in the future
+  - Error handling in general (i.e. parsing/loading of .obj or .fmat files, buffer creation, etc...)
+  - Also just errors in general
   - Better way to track buffer handles. What happens if we delete a buffer?
 
 

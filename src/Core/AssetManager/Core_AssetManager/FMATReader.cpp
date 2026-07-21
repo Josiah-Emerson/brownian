@@ -12,7 +12,7 @@ namespace Core{
       if(!fstrm.is_open()){
          std::string str {"Error opening file: "};
          str += path;
-         FIG_UNCREACHABLE(str.c_str());
+         FIG_UNREACHABLE(str.c_str());
       }
 
       std::string line;
@@ -56,7 +56,7 @@ namespace Core{
          FIG_ASSERT(m_fmat.vsPath.empty(), "A vertex shader path has already been parsed from this .fmat file")
          m_fmat.vsPath = path;
       }else{
-         FIG_UNCREACHABLE("Unknown token encountered while parsing .fmat file")
+         FIG_UNREACHABLE("Unknown token encountered while parsing .fmat file")
       }
    }
 

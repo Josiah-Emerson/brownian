@@ -93,7 +93,7 @@ namespace Core{
             ret = Linear::Matrix<T, 4, 4> (def);
             break;
          default: 
-            FIG_UNCREACHABLE("Invalid or unhandled primitive count")
+            FIG_UNREACHABLE("Invalid or unhandled primitive count")
       }
 
       return std::move(ret);

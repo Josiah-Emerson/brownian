@@ -63,7 +63,7 @@ namespace Core{
          case(MemoryUsage::GPU_TO_CPU):
             break;
          default: 
-            FIG_UNCREACHABLE("Unhandled MemoryUsage type")
+            FIG_UNREACHABLE("Unhandled MemoryUsage type")
       }
 
       FIG_ASSERT(hint != GLMemoryUseHint::NONE, "Hint unable to be deduced")
@@ -99,7 +99,7 @@ namespace Core{
       GLint linkResult;
       m_openGL.glGetProgramiv(programID, GL_LINK_STATUS, &linkResult);
       if(linkResult != GL_TRUE){
-         FIG_UNCREACHABLE("failed to link program")
+         FIG_UNREACHABLE("failed to link program")
       }
 
       std::vector<UniformReflectionMetadata> uniforms = internalReflectUniforms(programID);
@@ -172,7 +172,7 @@ namespace Core{
          GLint numComponents = vAttr.typeDesc.primCnt;
          if(numComponents > 4){
             // TODO: Do something about this
-            FIG_UNCREACHABLE("For vertex attributes, numComponents must be 1, 2, 3, 4, or GL_BGRA")
+            FIG_UNREACHABLE("For vertex attributes, numComponents must be 1, 2, 3, 4, or GL_BGRA")
          }
          GLenum type;
 
@@ -185,12 +185,12 @@ namespace Core{
                type = GL_FLOAT;
                break;
             case(PrimitiveType::DOUBLE):
-               FIG_UNCREACHABLE("Currently our openGL implementation does not support double for vertex attributes")
+               FIG_UNREACHABLE("Currently our openGL implementation does not support double for vertex attributes")
                // type = GL_DOUBLE;
                // TODO: GL_DOUBLE only accepted by glVertexAttribLPointer (see glVertexAttribPointer docs)
                break;
             default:
-               FIG_UNCREACHABLE("The primitive type passed is not supported by openGL")
+               FIG_UNREACHABLE("The primitive type passed is not supported by openGL")
                break;
          }
 
@@ -224,7 +224,7 @@ namespace Core{
       std::string shaderCode;
       std::ifstream shaderStream(path, std::ios::in);
       if(!shaderStream.is_open()){
-         FIG_UNCREACHABLE("shader stream not open")
+         FIG_UNREACHABLE("shader stream not open")
       }
 
       // get shader code
@@ -250,7 +250,7 @@ namespace Core{
          delete[] message;
          std::string str = "Error in compilation: " + strMessage;
          std::cerr << str << '\n';
-         FIG_UNCREACHABLE("See std::cerr")
+         FIG_UNREACHABLE("See std::cerr")
       }
 
       return id;
