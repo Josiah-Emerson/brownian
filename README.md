@@ -1,18 +1,50 @@
-Things to think about: 
-   1) With the new ComponentTag system do we want to have the Tags inherit from ComponentTag? 
-   2) Will probably need to think about refactoring so that all the components go in their own place, 
-   and then the Graphics specific ComponentPack is defined somewhere else? Just doesn't seem the best rn
+TODO: Move imgui folder (and any other externals into externals folder)
 
-NEXT STEP: Implement Solvers
+
+GRAPHICS TODO(s) LEFT:
+  - Add a way to translate our uniform blocks to std140. Right now it doesn't matter as 
+  we only have one block with a single mat4 but in the future
+  - Error handling in general (i.e. parsing/loading of .obj or .fmat files, buffer creation, etc...)
+  - Also just errors in general
+  - Better way to track buffer handles. What happens if we delete a buffer?
+
+
+NEXT STEP: Create a physics systems 
+   - This tracks all the particles in its system, and is responsible for things like force repulsion. This system is responsible 
+   for calculating the various forces each element may feel, as well as how this is done. For example: In a system of particles it can 
+   partition the system into a grid and only check a certain amount of surrounding cells for inter-particle repulsion forces so as to 
+   not result in an O(n^2) check time every single frame. Or it could take a different approach, but it is responsible for calculating 
+   and updating the forces 
+   - Will also track system stats like energy and stuff of that nature 
+   - Question: Lets say we have 10 objects that react to gravity and other forces. If we want these to rebound off the floor, how do 
+   we add the floor to our system so that it is not affected by gravity, and just stays there?
+   ANSWER: body types: Static (the floor) which does not get updated due to forces, Dynamic (the particles) move and react to forces, 
+   Kinematic (later): objects controlled by a specific function, script, or other method which means they do move, but not according to 
+   the usual forces
+   - Question: What do we want this API to look like? Add entity IDs in and their body type? 
+   - Question: For the registry/component pools, how can we ensure that the registry has the correct component (i.e. position/velo)? How 
+   do we ensure that if an entity has that component, it does not get removed accidentally? If an entity in the system doesn't have an entry 
+   what should we do? (Partial answer: I think we, for now, log when this happens)
+
+NEXT NEXT STEP: Implement Solvers
    - Decide how to partition solvers. Questions to ask:
       - Should we have on single base Solver class which Solvers (and sub-classes of solvers) inherit? 
       OR should we have a class for solvers which do Brownian motion vs other types of physical systems 
+ANSWER: 
+   - Something like this: 
+      class Solver; class GenericEulerMaruyama : Solver; class BrownianMotionEulerMaruyama : GenericEulerMaruyama;
+      where BMEM would specify would specifiy the functions it needed, and give the ability to define what constants 
+      the user could control?
+
       - If we keep all solvers together should we add an enum for selecting the solver type?
+ANSWER: 
+   I think an enum with values like SDE, ODE, etc?
+
       - How do we define what a user needs to provide for these? Will they need the same inputs? 
       - Do we let the user provide a function for the 'stepper functions' or only give them control over 
       variables within those said functions? 
-
-BIG (NOT FUN) TODO: Redo the graphics stuff so it is not so terrible
+      - Maybe like a static assert and then the RenderDevice (or whatever needs it) can tell you what 
+      types it needs to contain. How to do the stuff with validating GraphicsComperands though? TBD
 
 TODO: There is a way to use our own math class with ImGui
 TODO: Do some stuff in Camera class with LOCKED vs DIRECTIONAL
@@ -24,14 +56,12 @@ Add to destructor of GLShader to delete it to free memory. In GLShaderProgram, d
 TODO: Projection matrix is ever so slightly off of what glm::perspective returns. Specifically in the first element and 6th i.e. second row second column
 TODO: Think about some cool ways to overload vector/matrix funcs to allow for some more useful and different stuff
 TODO: Look into how to handle (for now just in vec/mat stuff but in the future more heavy calculations) things like loss of precision, when should a small number just become 0, etc..
-TODO: Work on openGL renderer
 TODO: Implement a Fig enum for datatypes and have imgui handle translating so that layers don't need to know about ImGuiDataType
 TODO: Implement Tree and refactor stuff to use that
 TODO: Implement actual structures for Fig::Events (and maybe begin actually handling them in app), 
 TODO: ImGuiWidgets folder (i.e. reusable widgets like color picker)
+TODO: Decouple application from imgui (see things like linux window)
 
-TODO: Vision for future is to have array simple structs represent particles and such, and hold the basic info such as position and mass (i.e. data oriented approach)
-for doing the physics on them, and then when we render have perhaps a pointer to a render object 
 
    /* 
    std::cout << std::fixed << std::setprecision(std::numeric_limits<double>::max_digits10);

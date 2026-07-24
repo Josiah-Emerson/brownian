@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
-#include "Core_Window/Window.h"
 #include "Layer.h"
+#include "Core_Window/Window.h"
+#include "Core_AssetManager/AssetManager.h"
+#include "Core_Graphics/RenderDevice.h"
 #include "Events.h"
 
 namespace Core{
@@ -19,10 +21,14 @@ namespace Core{
          void stop();
          void raiseEvent(Core::Events::Event& event);
 
-         template <typename TLayer>
+         template <typename TLayer, typename... Args>
          requires(std::is_base_of_v<Layer, TLayer>)
-         void pushLayer(){
-            m_layerStack.push_back( std::make_unique<TLayer>() );
+         void pushLayer(Args&&... args){
+            m_layerStack.push_back(
+                  std::make_unique<TLayer>(
+                     std::forward<Args>(args)...
+                     )
+                  );
          }
 
          /*
@@ -43,6 +49,9 @@ namespace Core{
          // getFrameBufferSize() const; // maybe need this
          std::shared_ptr<Window> getWindow() const { return m_window; }
 
+         AssetManager& getAssetManager() { return *m_assetManager; }
+         RenderDevice* getRenderDevice() { return m_device.get(); }
+
          static Application& get();
          // static float getTime(); // TODO: do this later
 
@@ -51,6 +60,8 @@ namespace Core{
          std::shared_ptr<Window> m_window;
          bool m_running = false;
          std::vector<std::unique_ptr<Layer>> m_layerStack;
+         std::unique_ptr<RenderDevice> m_device;
+         std::unique_ptr<AssetManager> m_assetManager;
    };
 
 

@@ -7,18 +7,19 @@ target_sources(${target} PRIVATE
    Layer.cpp
 )
 
+add_subdirectory(AssetManager)
 add_subdirectory(ECS)
 add_subdirectory(Graphics)
-add_subdirectory(Physics)
+# add_subdirectory(Physics)
 add_subdirectory(UI)
-add_subdirectory(Utils)
 add_subdirectory(Window)
-
-target_link_libraries(${target} PUBLIC 
-   Core::ECS
-   Core::Graphics
-   Core::Utils
-   Core::Window
-)
+add_subdirectory(Utils)
 
 target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(${target} PUBLIC 
+   Core::Window
+   Core::Graphics
+   Core::Utils
+)
+

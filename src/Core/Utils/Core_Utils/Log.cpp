@@ -30,6 +30,7 @@ namespace Core{
                "Message | source file information\nExample:\n");
 
          fprintf(g_stats.logFile, "HH:MM:SS:MS | LOG/WARNING | Message | File:Line File::function()\n\n");
+         fflush(g_stats.logFile);
 
          g_stats.init = true;
       }
@@ -39,6 +40,7 @@ namespace Core{
          std::string _file { shortenFilePath(file) };
          fprintf(g_stats.logFile, "%s LOG: %s | %s:%d, %s::%s\n",
                timeSinceprogramStart().c_str(), msg, _file.c_str(), line, _file.c_str(), function);
+         fflush(g_stats.logFile);
 
          ++g_stats.totalMessages;
       }
@@ -67,6 +69,7 @@ namespace Core{
          std::string _file { shortenFilePath(file) };
          fprintf(g_stats.logFile, "%s %s: %s | %s:%d, %s::%s\n",
                timeSinceprogramStart().c_str(), wlabel.c_str(), msg, _file.c_str(), line, _file.c_str(), function);
+         fflush(g_stats.logFile);
       }
 
       void figAssert(const char* msg, FIG_FLF_ARGS){
@@ -79,6 +82,7 @@ namespace Core{
                timeSinceprogramStart().c_str(), msg, _file.c_str(), line, _file.c_str(), function);
          fprintf(g_stats.logFile, "%s", str);
          fprintf(stderr, "%s", str);
+         fflush(g_stats.logFile);
 
          assert(false && "FIG_ASSERT encounterd. See stderr or log for more information");
       }

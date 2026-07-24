@@ -27,9 +27,18 @@ namespace Core{
       template<typename... Args>
       using float_promotion_t = std::common_type_t<float, Args...>;
 
+      template<typename T, template<typename...> class Target>
+      struct is_instance_of_template : std::false_type {};
+
+      template<template<typename...> class Target, typename... Args>
+      struct is_instance_of_template<Target<Args...>, Target>: std::true_type {};
+
+      // Checks if type T is an instance of a template Target
+      template<typename T, template<typename...> class Target>
+      concept is_instance_of_template_v = is_instance_of_template<T, Target>::value;
 
       template<typename T>
-      concept is_component = std::is_trivially_copyable_v<T> && std::is_standard_layout_v<T>;
+      concept is_triv_copy_and_std_lay_v = std::is_trivially_copyable_v<T> && std::is_standard_layout_v<T>;
 
       // Is type U in (expanded) pack V
       // Proper syntax: is_in_pack<U, Pack...>

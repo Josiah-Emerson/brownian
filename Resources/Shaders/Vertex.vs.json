@@ -1,0 +1,10 @@
+{
+   "uniforms": [
+      {
+         "name": "color",
+         "widgets": ["RGBSelector"],
+         "labels": ["Color:"],
+         "defaults": [0.5, 0.5, 0.2]
+      }
+   ]
+}
