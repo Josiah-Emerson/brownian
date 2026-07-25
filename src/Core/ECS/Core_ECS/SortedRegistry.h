@@ -19,22 +19,6 @@
 // Example for a SP that needs MVP and Color as its uniforms
 // Assume that the attribute input variables follow our layout and are good
 
-// TODO: How to actually iterate through
-// For example: 
-// posData = getContiguousComponentData<pos>();
-// posData should be sorted based on Compare<U>, put how do we know where those splits are ?
-// iterPairs: posPool.getIterators(); maybe pairs of beginning and end? 
-// For shaders and model example (or something like that):
-// struct U { Shader shader; Model model; };
-// for(iter : iterPairs){
-//    U u = getU(iter);
-//    openGL.useProgram(shader);
-//    openGL.bindVAO(model.VAO);
-//    for(i {iter.first}; i < iter.second; ++i){
-//       doSomething();
-//    }
-// }
-
 namespace Core{
    // THOUGHT: SortedRegistry should be a central repository for keeping track of all the different 
    // components a scene might want. For example position, color, velocity and mass. A RenderDevice 
