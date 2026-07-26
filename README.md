@@ -8,8 +8,6 @@ GRAPHICS TODO(s) LEFT:
   - Also just errors in general
   - Better way to track buffer handles. What happens if we delete a buffer?
 
-
-HERE: Began slowly working on a way to do view of registry
 NEXT STEP: Create a physics systems 
    - Step 1: We probably need to refactor the way we do views of a registry, so move that from Renderer and into its own thing, 
    then, work on defining iterators for that view (and perhaps our registry as well) so that we can iterate through it in a way 

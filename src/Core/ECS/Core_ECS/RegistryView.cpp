@@ -11,5 +11,11 @@ namespace Core{
       SortedRegistry<U, C, FullPack> reg;
 
       RegistryView<ValidSubPack> view {reg};
+
+      using Iterator = RegistryView<ValidSubPack>::Iterator;
+
+
+      for(const auto& [pos, dir] : view){
+      }
    }
 } // namespace Core
