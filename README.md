@@ -1,6 +1,17 @@
 TODO: Move imgui folder (and any other externals into externals folder)
+TODO: Move Catch2 into externals folder. Also figure out submodules. Why 
+do we have Catch2 and json as submodules, but imgui is not? Does it 
+matter? How do we make sure that if I pull on one machine it automatically 
+works and going to build doesn't result in an error because it can't find 
+the submodule?
 
 
+HERE: Added iterator for SortedComponentPool. Now work on iterator for RegistryView using this. 
+Essentially we are gonna need to template the constructor of view to types of SortedRegistry, 
+and then create a call back in that constructor which knows how to cast the registry. The hard 
+part might be determining what IDs are contained in each pool. Might be a good idea to provide a 
+way for SortedComponentPool to tell us what IDs they have, and then we keep a list of IDs that are 
+contained in all of the mentioned Components? 
 GRAPHICS TODO(s) LEFT:
   - Add a way to translate our uniform blocks to std140. Right now it doesn't matter as 
   we only have one block with a single mat4 but in the future

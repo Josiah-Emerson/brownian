@@ -5,6 +5,7 @@
 #include "Core_Utils/Log.h"
 #include <algorithm>
 #include <concepts>
+#include <iterator>
 #include <map>
 #include <stdexcept>
 #include <unordered_map>
@@ -34,6 +35,64 @@ namespace Core{
    CLASS_TEMPLATE 
    class SortedComponentPool{
       public:
+
+         struct Iterator{
+            using value_type = Component;
+            using reference  = value_type&;
+            using difference_type = std::ptrdiff_t;
+
+            using vec_iterator = std::vector<Component>::iterator;
+
+            Iterator() = default;
+            Iterator(vec_iterator iter) : m_iter {iter} {}
+
+
+            reference operator*() const { return *m_iter; }
+
+            Iterator& operator++() { ++m_iter; return *this; }
+            Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+
+            friend bool operator==(const Iterator& lhs, const Iterator& rhs) { return lhs.m_iter == rhs.m_iter; }
+            friend bool operator!=(const Iterator& lhs, const Iterator& rhs) { return !(lhs == rhs); }
+
+            private: 
+               vec_iterator m_iter;
+         };
+
+         struct ConstIterator{
+            using value_type      = Component;
+            using reference       = const value_type&;
+            using difference_type = std::ptrdiff_t;
+
+            using vec_const_iterator = std::vector<Component>::const_iterator;
+
+            ConstIterator() = default;
+            ConstIterator(vec_const_iterator iter) : m_iter { iter } {}
+
+            reference operator*() const { return *m_iter; }
+
+            ConstIterator& operator++() { ++m_iter; return *this; }
+            ConstIterator operator++(int) { ConstIterator tmp = *this; ++(*this); return tmp; }
+
+            friend bool operator==(const ConstIterator& lhs, const ConstIterator& rhs) { return lhs.m_iter == rhs.m_iter; }
+            friend bool operator!=(const ConstIterator& lhs, const ConstIterator& rhs) { return !(lhs == rhs); }
+
+            private: 
+               vec_const_iterator m_iter;
+         };
+
+         static_assert(std::forward_iterator<Iterator>, "Iterator is not a ForwardIterator");
+         static_assert(std::forward_iterator<ConstIterator>, "ConstIterator is not a ForwardIterator");
+
+         using iterator = Iterator;
+         using const_iterator = ConstIterator;
+
+         iterator begin() { return iterator(m_data.begin()); }
+         const_iterator begin() const;
+
+         iterator end() { return iterator(m_data.end()); }
+         const_iterator end() const;
+
          // where for one U u and corresponding Separator s, all values in range [first, second] 
          // correspond have a value equivalent to u
          using Separator = std::pair<std::size_t, std::size_t>; 
@@ -75,6 +134,8 @@ namespace Core{
 
          const std::map<U, Separator, Compare>& separatorList() const;
 
+         // TODO: Do I need to use separators? Kinda forgot 
+         // what they were for
          // throws exception if u is not in pool
          const Separator& separator(const U& u) const;
 
