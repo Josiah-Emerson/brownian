@@ -225,7 +225,7 @@ namespace Core{
       if(!containsEntity(id))
          return false;
 
-      return (!addComponent(id, std::forward<Args>(args)) && ...);
+      return (addComponent(id, std::forward<Args>(args)) && ...);
    }
 
    CLASS_TEMPLATE

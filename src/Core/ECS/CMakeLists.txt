@@ -7,7 +7,6 @@ add_library("Core::${dir}" ALIAS ${target})
 # SOURCES
 target_sources(${target} PRIVATE
    ${target}/Dummy.cpp
-   ${target}/Test.cpp
 )
 
 # INCLUDE DIRECTORY

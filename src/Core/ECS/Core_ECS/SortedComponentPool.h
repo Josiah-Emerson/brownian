@@ -109,6 +109,7 @@ namespace Core{
          bool insert(const EntityID id, const Component& val, const U& comperand);
          void remove(const EntityID id);
          bool contains(const EntityID id) const;
+         std::vector<EntityID> getEntityList() const;
          std::size_t size() const;
          std::size_t capacity() const;
          void reserve(std::size_t newCapacity);
@@ -337,6 +338,17 @@ namespace Core{
    CLASS_TEMPLATE
    bool SortedComponentPool<Component, Compare, U>::contains(const EntityID id) const {
       return m_idToIndexMap.contains(id);
+   }
+   CLASS_TEMPLATE
+   std::vector<EntityID> SortedComponentPool<Component, Compare, U>::getEntityList() const{
+      std::vector<EntityID> IDs;
+      IDs.reserve(m_idToIndexMap.size());
+
+      for(const auto& entry : m_idToIndexMap){
+         IDs.push_back(entry.first);
+      }
+
+      return std::move(IDs);
    }
 
    CLASS_TEMPLATE

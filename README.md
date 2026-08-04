@@ -1,3 +1,5 @@
+TODO: Look at all of the TODOs here and see if they still are needed even after changes lol 
+
 TODO: Move imgui folder (and any other externals into externals folder)
 TODO: Move Catch2 into externals folder. Also figure out submodules. Why 
 do we have Catch2 and json as submodules, but imgui is not? Does it 
@@ -5,19 +7,6 @@ matter? How do we make sure that if I pull on one machine it automatically
 works and going to build doesn't result in an error because it can't find 
 the submodule?
 
-
-HERE: Added iterator for SortedComponentPool. Now work on iterator for RegistryView using this. 
-Essentially we are gonna need to template the constructor of view to types of SortedRegistry, 
-and then create a call back in that constructor which knows how to cast the registry. The hard 
-part might be determining what IDs are contained in each pool. Might be a good idea to provide a 
-way for SortedComponentPool to tell us what IDs they have, and then we keep a list of IDs that are 
-contained in all of the mentioned Components? 
-GRAPHICS TODO(s) LEFT:
-  - Add a way to translate our uniform blocks to std140. Right now it doesn't matter as 
-  we only have one block with a single mat4 but in the future
-  - Error handling in general (i.e. parsing/loading of .obj or .fmat files, buffer creation, etc...)
-  - Also just errors in general
-  - Better way to track buffer handles. What happens if we delete a buffer?
 
 NEXT STEP: Create a physics systems 
    - Step 1: We probably need to refactor the way we do views of a registry, so move that from Renderer and into its own thing, 
@@ -58,6 +47,23 @@ ANSWER:
       variables within those said functions? 
       - Maybe like a static assert and then the RenderDevice (or whatever needs it) can tell you what 
       types it needs to contain. How to do the stuff with validating GraphicsComperands though? TBD
+
+GRAPHICS TODO(s) LEFT:
+  - Add a way to translate our uniform blocks to std140. Right now it doesn't matter as 
+  we only have one block with a single mat4 but in the future
+  - Error handling in general (i.e. parsing/loading of .obj or .fmat files, buffer creation, etc...)
+  - Also just errors in general
+  - Better way to track buffer handles. What happens if we delete a buffer?
+
+ECS TODO(s): 
+  - Wrote a simple ForwardIterator for SortedComponentPool. Do we want one for SortedRegistry?
+  - Update current tests (all broken) for the registry/pool, and add some for the iterator, and 
+  registry view
+  - Update anything that iterates through SortedComponentPool to use the iterator 
+  - Separators? Do we use them actually?
+  - see std::tie page on cppreference, but they can use std::tie in a bool operator() overload 
+  function for a struct which could be useful for modeling our compare/comperands in sorting
+
 
 TODO: There is a way to use our own math class with ImGui
 TODO: Do some stuff in Camera class with LOCKED vs DIRECTIONAL
